@@ -324,6 +324,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2685827893678483585, guid: 721ddca7e114a6842916badea2828f0f, type: 3}
     - target: {fileID: 1420316031336592245, guid: 1a09f406e15243042af8595d756fcfe9, type: 3}
+      propertyPath: planeSpeed
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1420316031336592245, guid: 1a09f406e15243042af8595d756fcfe9, type: 3}
       propertyPath: impulseSpeed
       value: 50
       objectReference: {fileID: 0}
@@ -334,6 +338,10 @@ PrefabInstance:
     - target: {fileID: 1420316031336592245, guid: 1a09f406e15243042af8595d756fcfe9, type: 3}
       propertyPath: impulseStayTime
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1420316031336592245, guid: 1a09f406e15243042af8595d756fcfe9, type: 3}
+      propertyPath: turningPlaneSpeed
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a09f406e15243042af8595d756fcfe9, type: 3}
