@@ -1,14 +1,14 @@
 using System.Collections;
 using UnityEngine;
 
-public class Bullet : ScreenWrapObject
+public class Projectile : ScreenWrapObject
 {
 
-    [SerializeField] private float bulletSpeed;
+    [SerializeField] private float speed;
     [SerializeField] private float maxDistanceTraveled; 
 
-    private Rigidbody _rigidbody;
-    private SphereCollider _collider;
+    private Rigidbody2D _rigidbody;
+    private CircleCollider2D _collider;
     private Vector2 _lastPosition;
     private float _totalDistance;
 
@@ -17,15 +17,16 @@ public class Bullet : ScreenWrapObject
     protected override void Awake()
     {
         base.Awake();
-        _rigidbody = GetComponent<Rigidbody>();
-        _collider = GetComponent<SphereCollider>();
+        _rigidbody = GetComponent<Rigidbody2D>();
+        _collider = GetComponent<CircleCollider2D>();
     }
 
-    public void InitializeBullet( Transform spawnTransform)
+    public void InitializeBullet( Vector3 spawnPos, Quaternion spawnRotation)
     {
-        transform.position = spawnTransform.position;
-        transform.rotation = spawnTransform.rotation;
-        _rigidbody.AddForce(-transform.up * (bulletSpeed * 100));
+        _collider.enabled = false;
+        transform.position = spawnPos;
+        transform.rotation = spawnRotation;
+        _rigidbody.AddForce(-transform.up * (speed * 100));
         _totalDistance = 0;
         StartCoroutine(PerformTerminate());
     }
@@ -38,6 +39,8 @@ public class Bullet : ScreenWrapObject
 
     private IEnumerator PerformTerminate()
     {
+        yield return new WaitForSeconds(0.1f);
+        _collider.enabled = true;
         while (!TerminateBullet)
         {
             var position = transform.position;
@@ -46,10 +49,10 @@ public class Bullet : ScreenWrapObject
             _lastPosition = position;
             yield return null;
         }
-        Terminate();
+        TerminateProjectile();
     }
 
-    private void Terminate()
+    private void TerminateProjectile()
     {
         Destroy(gameObject);
     }

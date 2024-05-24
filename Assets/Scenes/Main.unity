@@ -259,10 +259,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1245275143, guid: 1a09f406e15243042af8595d756fcfe9, type: 3}
-      propertyPath: m_LinearDrag
-      value: 0.5
-      objectReference: {fileID: 0}
     - target: {fileID: 1558453681934022, guid: 1a09f406e15243042af8595d756fcfe9, type: 3}
       propertyPath: m_Name
       value: Ship1
@@ -310,10 +306,6 @@ PrefabInstance:
     - target: {fileID: 4516860231943414, guid: 1a09f406e15243042af8595d756fcfe9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1420316031336592245, guid: 1a09f406e15243042af8595d756fcfe9, type: 3}
-      propertyPath: rotatingSpeed
-      value: 1.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a09f406e15243042af8595d756fcfe9, type: 3}
