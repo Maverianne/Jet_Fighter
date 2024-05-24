@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,24 +13,22 @@ public class Plane : ScreenWrapObject
     [SerializeField] private GameObject bullet;
     [SerializeField] private float maxHealth;
 
-   
-    private Rigidbody2D _rb2D;
-    private CircleCollider2D _col2D;
+    private Rigidbody2D _rigidbody2D;
+    private CircleCollider2D _collider2D;
 
-   
     private bool _isRotating;
     private float _currentSpeed;
     private float _lastImpulseTimeStamp;
 
+    private float _velocityBeforeImpulse;
 
     private bool CanImpulse => Time.unscaledTime > _lastImpulseTimeStamp + impulseCoolDown;
-
 
     protected override void Awake()
     {
         base.Awake();
-        _rb2D = GetComponent<Rigidbody2D>();
-        _col2D = GetComponent<CircleCollider2D>();
+        _rigidbody2D = GetComponent<Rigidbody2D>();
+        _collider2D = GetComponent<CircleCollider2D>();
         _currentSpeed = planeSpeed;
     }
 
@@ -43,10 +40,11 @@ public class Plane : ScreenWrapObject
         if (Keyboard.current.wKey.wasPressedThisFrame) Impulse();
         if (Keyboard.current.sKey.wasPressedThisFrame) Shooting();
         if (Keyboard.current.dKey.wasReleasedThisFrame || Keyboard.current.aKey.wasReleasedThisFrame) _isRotating = false;
-        if(!IsOutsideScreen(_col2D.radius/2)) return;
+        if(!IsOutsideScreen(_collider2D.radius/2)) return;
         WrapPosition();
     }
     
+
     private void MoveSpaceShip()
     {
         transform.position -= transform.up * (Time.deltaTime * GetSpeed());
@@ -67,6 +65,7 @@ public class Plane : ScreenWrapObject
         }
 
         if (_currentSpeed > planeSpeed) return _currentSpeed;
+        
         _currentSpeed += planeSpeedIncrement;
         return _currentSpeed;
     }
@@ -75,7 +74,7 @@ public class Plane : ScreenWrapObject
     {
          if(!CanImpulse) return;
         _lastImpulseTimeStamp = Time.unscaledTime;
-        _rb2D.AddForce(-transform.up * impulseSpeed);
+        _rigidbody2D.AddForce(-transform.up * impulseSpeed);
     }
 
     private void Shooting()

@@ -58,7 +58,6 @@ public class ScreenWrapObject : MonoBehaviour
 
     private Vector2 GetWrapPosition(Direction direction)
     {
-       
         var position = transform.position;
         switch (direction)
         {
