@@ -17,7 +17,8 @@ public class Spaceship : ScreenWrapObject
     private Animator _animator;
     private CircleCollider2D _collider2D;
 
-    private bool _isRotating;
+    protected Vector3 MovementInput;
+    
     private bool _isDestroyed; 
     private float _currentSpeed;
     private float _lastImpulseTimeStamp;
@@ -25,6 +26,7 @@ public class Spaceship : ScreenWrapObject
     private float _velocityBeforeImpulse;
 
     private bool CanImpulse => Time.unscaledTime > _lastImpulseTimeStamp + impulseCoolDown;
+    private bool IsRotating => MovementInput != Vector3.zero;
     private float CurrentHealthPercentage => Mathf.Clamp01(_currentHealth / maxHealth);
 
     private static readonly int Exp = Animator.StringToHash("expl");
@@ -59,11 +61,7 @@ public class Spaceship : ScreenWrapObject
             TerminateSpaceship();
         }
         MoveSpaceship();
-        // if (Keyboard.current.dKey.isPressed) Rotate(true);
-        // if (Keyboard.current.aKey.isPressed) Rotate(false);
-        // if (Keyboard.current.wKey.wasPressedThisFrame) Impulse();
-        // if (Keyboard.current.sKey.wasPressedThisFrame) Shooting();
-        // if (Keyboard.current.dKey.wasReleasedThisFrame || Keyboard.current.aKey.wasReleasedThisFrame) _isRotating = false;
+        Rotate(MovementInput);
         if(!IsOutsideScreen(_collider2D.radius/2)) return;
         WrapPosition();
     }
@@ -73,16 +71,15 @@ public class Spaceship : ScreenWrapObject
     {
         transform.position -= transform.up * (Time.deltaTime * GetSpeed());
     }
-    protected void Rotate(bool rotatingRight)
+
+    private void Rotate(Vector3 movementInput)
     {
-        _isRotating = true;
-        var rotatingVector = rotatingRight ? Vector3.back : Vector3.forward;
-        transform.Rotate(rotatingVector * (Time.deltaTime * rotatingSpeed * 100));
+        transform.Rotate(movementInput * (Time.deltaTime * rotatingSpeed * 100));
     }
     
     private float GetSpeed()
     {
-        if (_isRotating)
+        if (IsRotating)
         {
             _currentSpeed = speedWhileRotating;
             return _currentSpeed;
