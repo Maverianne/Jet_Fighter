@@ -32,12 +32,30 @@ namespace EnemyAI
             }
 
             public Difficulty difficulty = Difficulty.Normal;
-            public Spaceship.SpaceshipParameters shipParameters; 
-            [Header("Enemy Parameters")]
+            public Spaceship.SpaceshipParameters shipParameters;
+
+            [Header("Enemy Parameters")] 
+        
+            
+            [Header("Delays and cooldowns")]
+            [Range(0f, 5f)]
             public float minAttackCoolDown;
+            [Range(0f, 5f)]
             public float maxAttackCoolDown;
+            [Range(0f, 5f)]
+            public float minStandby;
+            [Range(0f, 5f)]
+            public float maxStandby;
+            
+            [Header("Distance behaviours")]
+            [Range(0f, 5f)]
             public float attackDistance;
+            [Range(1f, 5f)]
             public float retreatDistance;
+
+            [Header("Probabilities")]
+            [Range(0f, 1f)]
+            public float impulseChance;
         }
     }
 }

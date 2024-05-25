@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class Spaceship : ScreenWrapObject
 {
@@ -11,27 +10,24 @@ public class Spaceship : ScreenWrapObject
 
     private Rigidbody2D _rigidbody2D;
     private Animator _animator;
-    protected CircleCollider2D Collider2D;
+    private CircleCollider2D _collider2D;
 
     protected Vector3 MovementInput;
-    
-    protected bool IsDestroyed; 
+
+    private bool _isDestroyed; 
     private float _currentSpeed;
     private float _lastImpulseTimeStamp;
     private float _currentHealth;
     private float _velocityBeforeImpulse;
-    private SpaceshipParameters _currentSpaceShipParameter;
 
-    protected bool CanImpulse => Time.unscaledTime > _lastImpulseTimeStamp + CurrentSpaceShipParameters.impulseCoolDown;
+    private bool CanImpulse => Time.unscaledTime > _lastImpulseTimeStamp + CurrentSpaceShipParameters.impulseCoolDown;
     private bool IsRotating => MovementInput != Vector3.zero;
-    protected float CurrentHealthPercentage => Mathf.Clamp01(_currentHealth / CurrentSpaceShipParameters.maxHealth);
+    private float CurrentHealthPercentage => Mathf.Clamp01(_currentHealth / CurrentSpaceShipParameters.maxHealth);
 
 
-    protected SpaceshipParameters CurrentSpaceShipParameters
-    {
-        get => defaultShipParameters;
-        set => _currentSpaceShipParameter = value;
-    }
+    protected SpaceshipParameters CurrentSpaceShipParameters { get; set; }
+
+    protected GameObject ProjectileSpawnPoint => projectileSpawnPoint;
 
     private static readonly int Exp = Animator.StringToHash("expl");
     private const string Projectile = "Projectile";
@@ -40,7 +36,7 @@ public class Spaceship : ScreenWrapObject
     {
         base.Awake();
         _rigidbody2D = GetComponent<Rigidbody2D>();
-        Collider2D = GetComponent<CircleCollider2D>();
+        _collider2D = GetComponent<CircleCollider2D>();
         _animator = GetComponent<Animator>();
         
     }
@@ -52,31 +48,32 @@ public class Spaceship : ScreenWrapObject
 
     protected virtual void StartGame()
     {
+        SetShipParameters();
         _currentSpeed = CurrentSpaceShipParameters.speed;
         _currentHealth = CurrentSpaceShipParameters.maxHealth;
-        IsDestroyed = false;
+        _isDestroyed = false;
     }
 
-    private void Update()
+    protected virtual void Update()
     {
-        if(IsDestroyed)return;
+        if(_isDestroyed)return;
         if (CurrentHealthPercentage <= 0)
         {
-            IsDestroyed = true;
+            _isDestroyed = true;
             TerminateSpaceship();
         }
         MoveSpaceship();
      
-        if(!IsOutsideScreen(Collider2D.radius/2)) return;
+        if(!IsOutsideScreen(_collider2D.radius/2)) return;
         WrapPosition();
     }
 
-    private void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         Rotate(MovementInput);
     }
 
-    protected void MoveSpaceship()
+    private void MoveSpaceship()
     {
         transform.position -= transform.up * (Time.deltaTime * GetSpeed());
     }
@@ -100,20 +97,25 @@ public class Spaceship : ScreenWrapObject
         return _currentSpeed;
     }
 
-    protected void Impulse()
+    protected virtual void Impulse()
     {
          if(!CanImpulse) return;
         _lastImpulseTimeStamp = Time.unscaledTime;
         _rigidbody2D.AddForce(-transform.up * CurrentSpaceShipParameters.impulseSpeed);
     }
 
-    protected void Shooting()
+    protected virtual void Shooting()
     { 
         var bulletPrefab = Instantiate(projectile);
-        bulletPrefab.GetComponent<Projectile>().InitializeBullet(projectileSpawnPoint.transform.position, transform.rotation);
+        bulletPrefab.GetComponent<Projectile>().InitializeBullet(projectileSpawnPoint.transform.position, transform.rotation, CurrentSpaceShipParameters.projectileSpeed, CurrentSpaceShipParameters.projectileDistance);
     }
 
-    protected void TerminateSpaceship()
+    protected virtual void SetShipParameters()
+    {
+        CurrentSpaceShipParameters = defaultShipParameters;
+    }
+
+    protected virtual void TerminateSpaceship()
     {
         _animator.SetBool(Exp, true);
     }
@@ -141,5 +143,8 @@ public class Spaceship : ScreenWrapObject
         [Header("Impulse parameters")]
         public float impulseSpeed;
         public float impulseCoolDown;
+        [Header("Projectile parameters")]
+        public float projectileSpeed; 
+        public float projectileDistance;
     }
 }

@@ -213,25 +213,9 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2279745548668290856, guid: e55def075c6a1974c86978294e7b5d6e, type: 3}
-      propertyPath: maxHealth
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 2279745548668290856, guid: e55def075c6a1974c86978294e7b5d6e, type: 3}
-      propertyPath: defaultShipParameters.speed
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2279745548668290856, guid: e55def075c6a1974c86978294e7b5d6e, type: 3}
-      propertyPath: defaultShipParameters.maxHealth
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 2279745548668290856, guid: e55def075c6a1974c86978294e7b5d6e, type: 3}
-      propertyPath: defaultShipParameters.rotatingSpeed
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 2279745548668290856, guid: e55def075c6a1974c86978294e7b5d6e, type: 3}
-      propertyPath: defaultShipParameters.speedWhileRotating
-      value: 0
+    - target: {fileID: 7878144034274081365, guid: e55def075c6a1974c86978294e7b5d6e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.53
       objectReference: {fileID: 0}
     - target: {fileID: 7878311276507119265, guid: e55def075c6a1974c86978294e7b5d6e, type: 3}
       propertyPath: m_RootOrder
@@ -277,13 +261,29 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7879688644727654025, guid: e55def075c6a1974c86978294e7b5d6e, type: 3}
-      propertyPath: m_Constraints
-      value: 0
+    - target: {fileID: 7878399161017604887, guid: e55def075c6a1974c86978294e7b5d6e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.672
       objectReference: {fileID: 0}
     - target: {fileID: 7880371544542176891, guid: e55def075c6a1974c86978294e7b5d6e, type: 3}
       propertyPath: m_Name
       value: EnemyShip
+      objectReference: {fileID: 0}
+    - target: {fileID: 8046155250991973691, guid: e55def075c6a1974c86978294e7b5d6e, type: 3}
+      propertyPath: m_FlipX
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8046155250991973691, guid: e55def075c6a1974c86978294e7b5d6e, type: 3}
+      propertyPath: m_FlipY
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8047439122940425257, guid: e55def075c6a1974c86978294e7b5d6e, type: 3}
+      propertyPath: m_FlipY
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8575976087938298687, guid: e55def075c6a1974c86978294e7b5d6e, type: 3}
+      propertyPath: m_Offset.y
+      value: 0.27
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e55def075c6a1974c86978294e7b5d6e, type: 3}
@@ -622,54 +622,6 @@ PrefabInstance:
     - target: {fileID: 4898825685532307036, guid: d3d2d94e8861b2146914fd588dc891a1, type: 3}
       propertyPath: m_Name
       value: PlayerShip
-      objectReference: {fileID: 0}
-    - target: {fileID: 7542070192610272191, guid: d3d2d94e8861b2146914fd588dc891a1, type: 3}
-      propertyPath: speed
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7542070192610272191, guid: d3d2d94e8861b2146914fd588dc891a1, type: 3}
-      propertyPath: maxHealth
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 7542070192610272191, guid: d3d2d94e8861b2146914fd588dc891a1, type: 3}
-      propertyPath: impulseSpeed
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7542070192610272191, guid: d3d2d94e8861b2146914fd588dc891a1, type: 3}
-      propertyPath: rotatingSpeed
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7542070192610272191, guid: d3d2d94e8861b2146914fd588dc891a1, type: 3}
-      propertyPath: speedIncrement
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7542070192610272191, guid: d3d2d94e8861b2146914fd588dc891a1, type: 3}
-      propertyPath: impulseCoolDown
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7542070192610272191, guid: d3d2d94e8861b2146914fd588dc891a1, type: 3}
-      propertyPath: speedWhileRotating
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7542070192610272191, guid: d3d2d94e8861b2146914fd588dc891a1, type: 3}
-      propertyPath: defaultShipParameters.speed
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7542070192610272191, guid: d3d2d94e8861b2146914fd588dc891a1, type: 3}
-      propertyPath: defaultShipParameters.maxHealth
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 7542070192610272191, guid: d3d2d94e8861b2146914fd588dc891a1, type: 3}
-      propertyPath: defaultShipParameters.rotatingSpeed
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7542070192610272191, guid: d3d2d94e8861b2146914fd588dc891a1, type: 3}
-      propertyPath: defaultShipParameters.speedIncrement
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7542070192610272191, guid: d3d2d94e8861b2146914fd588dc891a1, type: 3}
-      propertyPath: defaultShipParameters.speedWhileRotating
-      value: 1.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d3d2d94e8861b2146914fd588dc891a1, type: 3}

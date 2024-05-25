@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 
 namespace EnemyAI
@@ -7,15 +6,25 @@ namespace EnemyAI
         public class EnemyShip : Spaceship
         {
                 [SerializeField] private EnemyBehaviourParameters enemyBehaviourParameters;
-                
-                private IEnumerator _currentBehaviour;
-                private PlayerController _player;
-                private Transform _lastPlayerPos;
 
-                private EnemyBehaviourParameters.EnemyParameters _currentEnemyParameters;
-                private bool LookingAtPlayer => Math.Abs(transform.rotation.z - _lastPlayerPos.rotation.z) < _currentEnemyParameters.retreatDistance;
-                private bool PlayerInAttackRange => Vector2.Distance(_player.transform.position, transform.position) < _currentEnemyParameters.attackDistance;
-                private bool PlayerTooClose => Math.Abs(transform.rotation.z - _lastPlayerPos.rotation.z) < 0.1;
+                private float _zRot;
+                private float _lastAttackTimeStamp;
+                private float _currentAttackCoolDown;
+
+                private IEnumerator _currentBehaviour; 
+                
+                private const string Player = "Player";
+
+                private float DistanceToPlayer => Vector2.Distance(_player.transform.position, transform.position);
+                private bool CanPerformOffense => DistanceToPlayer > _enemyParameters.attackDistance;
+                private bool CanPerformDefense => DistanceToPlayer < _enemyParameters.retreatDistance;
+                
+                private bool CanAttack => Time.unscaledTime > _lastAttackTimeStamp + _currentAttackCoolDown;
+
+                public bool DodgeBullet { get; set; }
+
+                private PlayerController _player;
+                private EnemyBehaviourParameters.EnemyParameters _enemyParameters;
 
                 protected override void Awake()
                 {
@@ -25,76 +34,110 @@ namespace EnemyAI
 
                 protected override void StartGame()
                 {
-                        _currentEnemyParameters = enemyBehaviourParameters.GetBehaviourParameters(EnemyBehaviourParameters.EnemyParameters.Difficulty.Normal);
-                        CurrentSpaceShipParameters = _currentEnemyParameters.shipParameters;
                         base.StartGame();
                         SelectNextBehaviour();
                 }
 
-                protected override void Rotate(Vector3 movementInput)
-                {
-                        var rotation = transform.rotation;
-                        
-                        var difference =  _player.transform.position - transform.position;
-                        var rotationZ = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;
-                        var vectorTargetRotation = new Vector3(rotation.x, rotation.y, rotationZ);
-                        transform.Rotate(vectorTargetRotation * (Time.deltaTime * _currentEnemyParameters.shipParameters.rotatingSpeed));
 
+                protected override void SetShipParameters()
+                {
+                        _enemyParameters = enemyBehaviourParameters.GetBehaviourParameters(EnemyBehaviourParameters.EnemyParameters.Difficulty.Normal);
+                        CurrentSpaceShipParameters = _enemyParameters.shipParameters;
                 }
 
-
+                protected override void FixedUpdate() { }
+                
                 private void SelectNextBehaviour()
                 {
-                        StopCoroutine(_currentBehaviour);
-                        if (PlayerInAttackRange)
+                        if (CanPerformOffense)
                         {
-                                _currentBehaviour = PerformApproachPlayer();
+                                _currentBehaviour = PerformOffense();
+                                StartCoroutine(_currentBehaviour);
                         }
-                        else if(PlayerTooClose)
-                        { 
-                                _currentBehaviour = PerformRetreat();
+                        else if (CanPerformDefense)
+                        {
+                                _currentBehaviour = PerformDefense();
+                                StartCoroutine(_currentBehaviour);
                         }
                         else
                         {
-                                
+                                _currentBehaviour = PerformIdle(Random.Range(_enemyParameters.minStandby, _enemyParameters.maxStandby));
+                                StartCoroutine(_currentBehaviour);
                         }
-                        StartCoroutine(_currentBehaviour);
+                }
+                
+                protected virtual void ClearCurrentBehaviourSequence(bool selectNextBehaviour = true) 
+                {
+                        if(_currentBehaviour != null) StopCoroutine(_currentBehaviour);
+                        _currentBehaviour = null;
+                
+                        if(selectNextBehaviour) SelectNextBehaviour();
                 }
 
-                private IEnumerator LookAtPlayer()
+
+                private IEnumerator PerformOffense()
                 {
-                        _lastPlayerPos = _player.transform;
-                        var movementInput = new Vector3(0, 0, _lastPlayerPos.rotation.z);
-                        while (!LookingAtPlayer)
+                    
+                        while (CanPerformOffense)
                         {
-                              Rotate(movementInput);
+                                LookAtPlayer(90);
+                                Shooting();
                                 yield return null;
                         }
-                        
+                        ClearCurrentBehaviourSequence();
                 }
-
-                private IEnumerator PerformApproachPlayer()
+                
+                private IEnumerator PerformDefense()
                 {
-                        yield return null;
-                }
-
-                private IEnumerator PerformIdleMovement()
-                {
-                        while (!PlayerTooClose )
+                        while (CanPerformDefense)
                         {
-                                
+                                LookAtPlayer(0);
+                                yield return null;
                         }
-                        yield return null;
+
+                        Impulse();
+                        ClearCurrentBehaviourSequence();
                 }
 
-                private IEnumerator PerformImpulse()
+                private IEnumerator PerformIdle(float wait)
                 {
-                        yield return null;
+                        yield return new WaitForSeconds(wait);
+                        SelectNextBehaviour();
                 }
 
-                private IEnumerator PerformRetreat()
+
+                protected override void Shooting()
                 {
-                        yield return null;
+                        if(!CanAttack) return;
+                        
+                        var raycastHit = Physics2D.Raycast(ProjectileSpawnPoint.transform.position, -transform.up, 50f, LayerMask.GetMask(Player));
+                        if(ReferenceEquals(raycastHit.collider, null)) return;
+                        if (!raycastHit.collider.CompareTag(Player)) return;
+                        
+                        _lastAttackTimeStamp = Time.unscaledTime;
+                        _currentAttackCoolDown = Random.Range(_enemyParameters.minAttackCoolDown, _enemyParameters.maxAttackCoolDown);
+                        Impulse();
+                        base.Shooting();
                 }
+
+                protected override void Impulse()
+                {
+                        if(Random.Range(0f,1f) > _enemyParameters.impulseChance) return;
+                        base.Impulse();
+                }
+
+                private void LookAtPlayer(float rotationOffset)
+                {
+                        var position = transform.position;
+                        var rotation = transform.rotation;
+                        
+                        var difference = position - _player.gameObject.transform.position;
+                        var rotationZ = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;
+                        _zRot = rotationZ - rotationOffset;
+                        
+                        var targetRotation = Quaternion.Euler(new Vector3(rotation.x, rotation.y, _zRot)); ;
+                        transform.rotation = Quaternion.RotateTowards(rotation, targetRotation, CurrentSpaceShipParameters.rotatingSpeed * Time.deltaTime * 100);
+                }
+                
         }
 }

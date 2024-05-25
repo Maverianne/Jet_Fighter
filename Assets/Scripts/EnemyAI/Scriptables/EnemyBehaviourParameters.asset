@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: EnemyBehaviourParameters
   m_EditorClassIdentifier: 
   enemyParameters:
-  - difficulty: 0
+  - difficulty: 1
     shipParameters:
       maxHealth: 0
       speed: 0
@@ -22,7 +22,48 @@ MonoBehaviour:
       rotatingSpeed: 0
       impulseSpeed: 0
       impulseCoolDown: 0
+      projectileSpeed: 0
+      projectileDistance: 0
     minAttackCoolDown: 0
     maxAttackCoolDown: 0
+    minStandby: 0
+    maxStandby: 0
     attackDistance: 0
     retreatDistance: 0
+    impulseChance: 0
+  - difficulty: 2
+    shipParameters:
+      maxHealth: 10
+      speed: 3
+      speedIncrement: 0.2
+      speedWhileRotating: 2
+      rotatingSpeed: 3
+      impulseSpeed: 50
+      impulseCoolDown: 6
+      projectileSpeed: 5
+      projectileDistance: 10
+    minAttackCoolDown: 3
+    maxAttackCoolDown: 6
+    minStandby: 0.5
+    maxStandby: 2
+    attackDistance: 5
+    retreatDistance: 3
+    impulseChance: 1
+  - difficulty: 3
+    shipParameters:
+      maxHealth: 0
+      speed: 0
+      speedIncrement: 0
+      speedWhileRotating: 0
+      rotatingSpeed: 0
+      impulseSpeed: 0
+      impulseCoolDown: 0
+      projectileSpeed: 0
+      projectileDistance: 0
+    minAttackCoolDown: 0
+    maxAttackCoolDown: 0
+    minStandby: 0
+    maxStandby: 0
+    attackDistance: 0
+    retreatDistance: 0
+    impulseChance: 0

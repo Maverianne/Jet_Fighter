@@ -3,16 +3,14 @@ using UnityEngine;
 
 public class Projectile : ScreenWrapObject
 {
-
-    [SerializeField] private float speed;
-    [SerializeField] private float maxDistanceTraveled; 
-
+    
+    private float _maxDistanceTraveled;
     private Rigidbody2D _rigidbody;
     private CircleCollider2D _collider;
     private Vector2 _lastPosition;
     private float _totalDistance;
 
-    private bool TerminateBullet => _totalDistance > maxDistanceTraveled;
+    private bool TerminateBullet => _totalDistance > _maxDistanceTraveled;
 
     protected override void Awake()
     {
@@ -21,11 +19,12 @@ public class Projectile : ScreenWrapObject
         _collider = GetComponent<CircleCollider2D>();
     }
 
-    public void InitializeBullet( Vector3 spawnPos, Quaternion spawnRotation)
+    public void InitializeBullet( Vector3 spawnPos, Quaternion spawnRotation, float speed, float distance)
     {
         _collider.enabled = false;
         transform.position = spawnPos;
         transform.rotation = spawnRotation;
+        _maxDistanceTraveled = distance;
         _rigidbody.AddForce(-transform.up * (speed * 100));
         _totalDistance = 0;
         StartCoroutine(PerformTerminate());
