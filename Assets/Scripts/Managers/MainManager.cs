@@ -1,25 +1,27 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class MainManager : MonoBehaviour
+namespace Managers
 {
-    private bool _isExiting;
-      
-    public void ExitGame(InputAction.CallbackContext context)
+    public class MainManager : MonoBehaviour
     {
-        ExitGame();
-    }
+        private bool _isExiting;
 
-    public void ExitGame()
-    {
-        if(_isExiting) return;
-        _isExiting = true;
-        #if UNITY_EDITOR
-                UnityEditor.EditorApplication.isPlaying = false;
-        #else
+        public void ExitGame(InputAction.CallbackContext context)
+        {
+            ExitGame();
+        }
+
+        private void ExitGame()
+        {
+            if(_isExiting) return;
+            _isExiting = true;
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
                         Application.Quit();
-        #endif
+#endif
+        }
     }
 }
