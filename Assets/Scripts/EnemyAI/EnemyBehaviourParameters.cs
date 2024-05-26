@@ -35,17 +35,18 @@ namespace EnemyAI
             public Spaceship.SpaceshipParameters shipParameters;
 
             [Header("Enemy Parameters")] 
-        
             
-            [Header("Delays and cooldowns")]
+            [Header("Delays and cool downs")]
             [Range(0f, 5f)]
             public float minAttackCoolDown;
             [Range(0f, 5f)]
             public float maxAttackCoolDown;
             [Range(0f, 5f)]
-            public float minStandby;
+            public float minStandbyTime;
             [Range(0f, 5f)]
-            public float maxStandby;
+            public float maxStandbyTime;
+            [Range(0f, 5f)]
+            public float projectileDetectionCoolDown;
             
             [Header("Distance behaviours")]
             [Range(0f, 5f)]
@@ -56,6 +57,8 @@ namespace EnemyAI
             [Header("Probabilities")]
             [Range(0f, 1f)]
             public float impulseChance;
+            [Range(0f, 1f)]
+            public float dodgeBulletChance;
         }
     }
 }

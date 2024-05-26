@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Spaceship : ScreenWrapObject
@@ -8,11 +9,13 @@ public class Spaceship : ScreenWrapObject
     [SerializeField] private GameObject projectileSpawnPoint;
     [SerializeField] private GameObject projectile;
 
+
     private Rigidbody2D _rigidbody2D;
     private Animator _animator;
     private CircleCollider2D _collider2D;
 
     protected Vector3 MovementInput;
+    protected List<Projectile> MyProjectiles = new List<Projectile>();
 
     private bool _isDestroyed; 
     private float _currentSpeed;
@@ -26,11 +29,11 @@ public class Spaceship : ScreenWrapObject
 
 
     protected SpaceshipParameters CurrentSpaceShipParameters { get; set; }
-
     protected GameObject ProjectileSpawnPoint => projectileSpawnPoint;
+    
 
     private static readonly int Exp = Animator.StringToHash("expl");
-    private const string Projectile = "Projectile";
+    protected const string Projectile = "Projectile";
 
     protected override void Awake()
     {
@@ -78,7 +81,7 @@ public class Spaceship : ScreenWrapObject
         transform.position -= transform.up * (Time.deltaTime * GetSpeed());
     }
 
-    protected virtual void Rotate(Vector3 movementInput)
+    private void Rotate(Vector3 movementInput)
     {
         transform.Rotate(movementInput * (Time.deltaTime * CurrentSpaceShipParameters.rotatingSpeed * 100));
     }
@@ -106,8 +109,10 @@ public class Spaceship : ScreenWrapObject
 
     protected virtual void Shooting()
     { 
-        var bulletPrefab = Instantiate(projectile);
-        bulletPrefab.GetComponent<Projectile>().InitializeBullet(projectileSpawnPoint.transform.position, transform.rotation, CurrentSpaceShipParameters.projectileSpeed, CurrentSpaceShipParameters.projectileDistance);
+        var projectilePrefabGo = Instantiate(projectile);
+        var projectilePrefab = projectilePrefabGo.GetComponent<Projectile>();
+        projectilePrefab.InitializeBullet(projectileSpawnPoint.transform.position, transform.rotation, CurrentSpaceShipParameters.projectileSpeed, CurrentSpaceShipParameters.projectileDistance);
+        MyProjectiles.Add(projectilePrefab);
     }
 
     protected virtual void SetShipParameters()
@@ -125,9 +130,10 @@ public class Spaceship : ScreenWrapObject
         gameObject.SetActive(false);
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnCollisionEnter2D(Collision2D col)
     {
-        if(!other.CompareTag(Projectile)) return;
+        if(!col.gameObject.CompareTag(Projectile)) return;
+        col.gameObject.GetComponent<Projectile>().TerminateProjectile();
         _currentHealth--;
     }
 

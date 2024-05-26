@@ -51,7 +51,7 @@ public class Projectile : ScreenWrapObject
         TerminateProjectile();
     }
 
-    private void TerminateProjectile()
+    public void TerminateProjectile()
     {
         Destroy(gameObject);
     }
