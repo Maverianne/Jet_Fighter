@@ -1,4 +1,5 @@
 ﻿using System;
+using Managers;
 using UnityEngine;
 
 namespace EnemyAI
@@ -9,7 +10,7 @@ namespace EnemyAI
         [SerializeField] private EnemyParameters[] enemyParameters;
 
 
-        public EnemyParameters GetBehaviourParameters(EnemyParameters.Difficulty difficulty)
+        public EnemyParameters GetBehaviourParameters(GameplayManager.Difficulty difficulty)
         {
             foreach (var parameter in enemyParameters)
             {
@@ -23,15 +24,9 @@ namespace EnemyAI
         [Serializable]
         public class EnemyParameters
         {
-            public enum Difficulty 
-            {
-                None = 0, 
-                Easy = 1, 
-                Normal = 2, 
-                Hard = 3
-            }
+          
 
-            public Difficulty difficulty = Difficulty.Normal;
+            public GameplayManager.Difficulty difficulty = GameplayManager.Difficulty.Normal;
             public Spaceship.SpaceshipParameters shipParameters;
 
             [Header("Enemy Parameters")] 

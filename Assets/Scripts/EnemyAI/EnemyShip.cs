@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Managers;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -7,15 +8,15 @@ namespace EnemyAI
         public class EnemyShip : Spaceship
         {
                 [SerializeField] private EnemyBehaviourParameters enemyBehaviourParameters;
-                
-                
+
                 private float _zRot;
                 private float _lastAttackTimeStamp;
                 private float _lastProjectileDodgeTimeStamp;
                 private float _currentAttackCoolDown;
 
-              
-
+                private EnemyBehaviourParameters.EnemyParameters _enemyParameters;
+                private PlayerController _player;
+                
                 private IEnumerator _currentBehaviour; 
                 private IEnumerator _previousBehaviour; 
                 
@@ -27,17 +28,14 @@ namespace EnemyAI
                 private bool CanAttack => Time.unscaledTime > _lastAttackTimeStamp + _currentAttackCoolDown;
                 private bool CanCheckForProjectiles => Time.unscaledTime > _lastProjectileDodgeTimeStamp + _enemyParameters.projectileDetectionCoolDown;
 
-
-                private PlayerController _player;
-                private EnemyBehaviourParameters.EnemyParameters _enemyParameters;
-
+                
                 protected override void Awake()
                 {
                         base.Awake();
                         _player = FindObjectOfType<PlayerController>();
                 }
 
-                protected override void StartGame()
+                public override void StartGame()
                 {
                         base.StartGame();
                         SelectNextBehaviour();
@@ -46,7 +44,9 @@ namespace EnemyAI
 
                 protected override void SetShipParameters()
                 {
-                        _enemyParameters = enemyBehaviourParameters.GetBehaviourParameters(EnemyBehaviourParameters.EnemyParameters.Difficulty.Normal);
+                        var difficulty = MainManager.Instance.GameplayManager.CurrentDifficulty;
+                        difficulty = difficulty == GameplayManager.Difficulty.None ? GameplayManager.Difficulty.Normal : difficulty;
+                        _enemyParameters = enemyBehaviourParameters.GetBehaviourParameters(difficulty);
                         CurrentSpaceShipParameters = _enemyParameters.shipParameters;
                 }
 
@@ -100,7 +100,12 @@ namespace EnemyAI
                         base.Impulse();
                 }
 
-                
+                protected override void TerminateSpaceship()
+                {
+                        base.TerminateSpaceship();
+                        MainManager.Instance.GameplayManager.GameDone();
+                }
+
                 private void ForceIdle()
                 {
                         ClearCurrentBehaviourSequence(false);

@@ -9,31 +9,31 @@ public class Spaceship : ScreenWrapObject
     [SerializeField] private GameObject projectileSpawnPoint;
     [SerializeField] private GameObject projectile;
 
-
     private Rigidbody2D _rigidbody2D;
     private Animator _animator;
     private CircleCollider2D _collider2D;
-
-    protected Vector3 MovementInput;
+    private Quaternion _startRotation;
+    
     protected List<Projectile> MyProjectiles = new List<Projectile>();
-
-    private bool _isDestroyed; 
+    protected Vector3 MovementInput;
+    
     private float _currentSpeed;
     private float _lastImpulseTimeStamp;
     private float _currentHealth;
     private float _velocityBeforeImpulse;
-
-    private bool CanImpulse => Time.unscaledTime > _lastImpulseTimeStamp + CurrentSpaceShipParameters.impulseCoolDown;
-    private bool IsRotating => MovementInput != Vector3.zero;
-    private float CurrentHealthPercentage => Mathf.Clamp01(_currentHealth / CurrentSpaceShipParameters.maxHealth);
-
-
-    protected SpaceshipParameters CurrentSpaceShipParameters { get; set; }
-    protected GameObject ProjectileSpawnPoint => projectileSpawnPoint;
     
-
     private static readonly int Exp = Animator.StringToHash("expl");
     protected const string Projectile = "Projectile";
+    
+    protected SpaceshipParameters CurrentSpaceShipParameters { get; set; }
+    public bool CanPlay { get; set; }
+
+    protected GameObject ProjectileSpawnPoint => projectileSpawnPoint;
+    private bool CanImpulse => Time.unscaledTime > _lastImpulseTimeStamp + CurrentSpaceShipParameters.impulseCoolDown;
+    private bool IsRotating => MovementInput != Vector3.zero;
+   
+    private float CurrentHealthPercentage => Mathf.Clamp01(_currentHealth / CurrentSpaceShipParameters.maxHealth);
+    
 
     protected override void Awake()
     {
@@ -41,28 +41,31 @@ public class Spaceship : ScreenWrapObject
         _rigidbody2D = GetComponent<Rigidbody2D>();
         _collider2D = GetComponent<CircleCollider2D>();
         _animator = GetComponent<Animator>();
-        
+        _startRotation = transform.rotation;
+
     }
 
-    private void Start()
+    public void SetUpSpaceship(Vector3 startPosition)
     {
-        StartGame();
+        CanPlay = false;
+        transform.position = startPosition;
+        transform.rotation = _startRotation;
     }
-
-    protected virtual void StartGame()
+    
+    public virtual void StartGame()
     {
         SetShipParameters();
         _currentSpeed = CurrentSpaceShipParameters.speed;
         _currentHealth = CurrentSpaceShipParameters.maxHealth;
-        _isDestroyed = false;
+        CanPlay = true;
     }
 
     protected virtual void Update()
     {
-        if(_isDestroyed)return;
+        if(!CanPlay)return;
         if (CurrentHealthPercentage <= 0)
         {
-            _isDestroyed = true;
+            CanPlay = false;
             TerminateSpaceship();
         }
         MoveSpaceship();
@@ -73,6 +76,7 @@ public class Spaceship : ScreenWrapObject
 
     protected virtual void FixedUpdate()
     {
+        if(!CanPlay)return;
         Rotate(MovementInput);
     }
 
@@ -104,7 +108,7 @@ public class Spaceship : ScreenWrapObject
     {
          if(!CanImpulse) return;
         _lastImpulseTimeStamp = Time.unscaledTime;
-        _rigidbody2D.AddForce(-transform.up * CurrentSpaceShipParameters.impulseSpeed);
+        _rigidbody2D.AddRelativeForce(-transform.up * CurrentSpaceShipParameters.impulseSpeed);
     }
 
     protected virtual void Shooting()
@@ -120,8 +124,14 @@ public class Spaceship : ScreenWrapObject
         CurrentSpaceShipParameters = defaultShipParameters;
     }
 
+    public void FinishedGame()
+    {
+        CanPlay = false;
+        gameObject.SetActive(false);
+    }
     protected virtual void TerminateSpaceship()
     {
+        CanPlay = false;
         _animator.SetBool(Exp, true);
     }
 

@@ -6,14 +6,25 @@ namespace Managers
 {
     public class MainManager : MonoBehaviour
     {
+        public static MainManager Instance { get; private set; }
+        public GameplayManager GameplayManager { get; private set; }
+        public UIManager UIManager { get; private set; }
+        
         private bool _isExiting;
 
-        public void ExitGame(InputAction.CallbackContext context)
+        private void Awake()
         {
-            ExitGame();
-        }
+            if (Instance == null) Instance = this;
+            else if (Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
 
-        private void ExitGame()
+            UIManager = FindObjectOfType<UIManager>();
+            GameplayManager = GetComponentInChildren<GameplayManager>();
+        }
+        public void ExitGame()
         {
             if(_isExiting) return;
             _isExiting = true;
