@@ -39,7 +39,7 @@ namespace Managers
             
             switch (CurrentGameMode)
             {
-                case GameMode.Enemy:
+                case GameMode.Survival:
                     _playerOne = InstantiatePlayer(startPositions[0].transform.position, _playerOne, player01Prefab);
                     InstantiateEnemy(startPositions[1].transform.position);
                     break;
@@ -58,7 +58,7 @@ namespace Managers
             var playerInfos = MainManager.Instance.UIManager.PlayerInfo;
             switch (CurrentGameMode)
             {
-                case GameMode.Enemy:
+                case GameMode.Survival:
                     foreach (var playerInfo in playerInfos) playerInfo.gameObject.SetActive(false);
                     StartSpaceShip(_playerOne, playerInfos[0]);
                     StartSpaceShip(_enemyShip, playerInfos[1]);
@@ -102,7 +102,7 @@ namespace Managers
         {
             switch (CurrentGameMode)
             {
-                case GameMode.Enemy:
+                case GameMode.Survival:
                     if (win)
                     {
                         if (_playerOne.CanPlay) _playerOne.FinishedGame();
@@ -185,7 +185,7 @@ namespace Managers
         public enum GameMode
         {
             None = 0, 
-            Enemy = 1, 
+            Survival = 1, 
             TwoPlayers = 2 
         }
         

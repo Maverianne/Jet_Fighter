@@ -12,6 +12,7 @@ namespace UI
         private void Start()
         {
             MaxType = gameModeRecords.Length;
+            TMPText.text = gameModeRecords[0].displayModeName;
         }
         protected override void SetMode()
         {

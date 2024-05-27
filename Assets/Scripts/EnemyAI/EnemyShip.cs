@@ -46,6 +46,7 @@ namespace EnemyAI
                 public override void StartGame()
                 {
                         base.StartGame();
+                        MyStats.SetInfo(MyScore, SpaceshipName, CurrentSpaceShipParameters.impulseCoolDown, false);
                         SelectNextBehaviour();
                 }
                 protected override void SetShipParameters()
@@ -64,7 +65,6 @@ namespace EnemyAI
                         
                         _lastAttackTimeStamp = Time.unscaledTime;
                         _currentAttackCoolDown = Random.Range(_enemyParameters.minAttackCoolDown, _enemyParameters.maxAttackCoolDown);
-                        Impulse();
                         base.Shooting();
                 }
 
@@ -166,6 +166,7 @@ namespace EnemyAI
                 //The timers on offense and defense are to make sure the enemy doesn't stay to long in the same behaviour. 
                 private IEnumerator PerformOffense(float maxDuration)
                 {
+                        Impulse();
                         var timer = 0f;
                         while (CanPerformOffense)
                         {

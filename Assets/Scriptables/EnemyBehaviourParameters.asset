@@ -15,61 +15,64 @@ MonoBehaviour:
   enemyParameters:
   - difficulty: 1
     shipParameters:
-      maxHealth: 0
-      speed: 0
-      speedIncrement: 0
-      speedWhileRotating: 0
-      rotatingSpeed: 0
-      impulseSpeed: 0
-      impulseCoolDown: 0
-      projectileSpeed: 0
-      projectileDistance: 0
-    minAttackCoolDown: 0
-    maxAttackCoolDown: 0
-    minStandbyTime: 0
-    maxStandbyTime: 0
-    projectileDetectionCoolDown: 0
-    attackDistance: 0
-    retreatDistance: 0
-    impulseChance: 0
-    dodgeBulletChance: 0
-  - difficulty: 2
-    shipParameters:
       maxHealth: 3
       speed: 1.5
       speedIncrement: 0.2
       speedWhileRotating: 1
       rotatingSpeed: 2
       impulseSpeed: 5
-      impulseCoolDown: 6
+      impulseDuration: 1
+      impulseCoolDown: 15
       projectileSpeed: 0.5
       projectileDistance: 20
     minAttackCoolDown: 3
-    maxAttackCoolDown: 6
+    maxAttackCoolDown: 5
+    minStandbyTime: 1
+    maxStandbyTime: 2
+    projectileDetectionCoolDown: 4
+    attackDistance: 4
+    retreatDistance: 2
+    impulseChance: 0.5
+    dodgeBulletChance: 0.5
+  - difficulty: 2
+    shipParameters:
+      maxHealth: 3
+      speed: 2
+      speedIncrement: 0.2
+      speedWhileRotating: 1
+      rotatingSpeed: 2.5
+      impulseSpeed: 5
+      impulseDuration: 1
+      impulseCoolDown: 10
+      projectileSpeed: 0.6
+      projectileDistance: 20
+    minAttackCoolDown: 1.5
+    maxAttackCoolDown: 2.5
     minStandbyTime: 0.5
     maxStandbyTime: 1.5
     projectileDetectionCoolDown: 3
-    attackDistance: 5
-    retreatDistance: 3
-    impulseChance: 1
-    dodgeBulletChance: 1
+    attackDistance: 3
+    retreatDistance: 2
+    impulseChance: 0.5
+    dodgeBulletChance: 0.5
   - difficulty: 3
     shipParameters:
-      maxHealth: 0
-      speed: 0
-      speedIncrement: 0
-      speedWhileRotating: 0
-      rotatingSpeed: 0
-      impulseSpeed: 0
-      impulseCoolDown: 0
-      projectileSpeed: 0
-      projectileDistance: 0
-    minAttackCoolDown: 0
-    maxAttackCoolDown: 0
-    minStandbyTime: 0
-    maxStandbyTime: 0
-    projectileDetectionCoolDown: 0
-    attackDistance: 0
-    retreatDistance: 0
-    impulseChance: 0
-    dodgeBulletChance: 0
+      maxHealth: 3
+      speed: 2.2
+      speedIncrement: 0.3
+      speedWhileRotating: 1.5
+      rotatingSpeed: 2.5
+      impulseSpeed: 6
+      impulseDuration: 1
+      impulseCoolDown: 10
+      projectileSpeed: 0.7
+      projectileDistance: 20
+    minAttackCoolDown: 1
+    maxAttackCoolDown: 2
+    minStandbyTime: 0.5
+    maxStandbyTime: 1.5
+    projectileDetectionCoolDown: 2
+    attackDistance: 2.5
+    retreatDistance: 2
+    impulseChance: 0.7
+    dodgeBulletChance: 0.7

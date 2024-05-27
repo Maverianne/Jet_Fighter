@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UI;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.UIElements.Experimental;
 
 namespace Managers
@@ -13,6 +14,7 @@ namespace Managers
 
         [Header("Main Menu")]
         [SerializeField] private CanvasGroup mainMenu;
+        [SerializeField] private Button restartButton;
         [SerializeField] private TMP_Text gameModeText;
         [SerializeField] private TMP_Text gameDifficultyText;
         
@@ -26,6 +28,7 @@ namespace Managers
         private PlayerInfo[] _playerInfos;
 
         private const string Enemy = "Enemy";
+        private const string Player = "Player ";
         private const string GameOver = "Game Over";
         private const string Score = " score: ";
         private const string Win = " Won!";
@@ -60,7 +63,7 @@ namespace Managers
 
         private void SetMenuModes()
         {
-            MainManager.Instance.GameplayManager.CurrentGameMode = GameplayManager.GameMode.Enemy;
+            MainManager.Instance.GameplayManager.CurrentGameMode = GameplayManager.GameMode.Survival;
             gameModeText.text = MainManager.Instance.GameplayManager.CurrentGameMode.ToString();
             MainManager.Instance.GameplayManager.CurrentDifficulty = GameplayManager.Difficulty.Normal;
             gameDifficultyText.text = MainManager.Instance.GameplayManager.CurrentDifficulty.ToString();
@@ -70,19 +73,26 @@ namespace Managers
         public void SetGameOver()
         {
             endMenuText.text = GameOver;
+            RemoveButton(restartButton);
             StartCoroutine(PerformFade(0.3f, true, endMenu));
             _currentCanvasGroup = endMenu;
         }
 
-       
         public void SetPlayerWonGame(List<GameplayManager.PlayerScoreRegistry> registries, bool isOnePlayer = false, int winner = 0)
         {
             
             if (isOnePlayer) endMenuText.text = You + Win;
-            else endMenuText.text = winner + Win;
+            else endMenuText.text = Player + winner + Win;
+            RemoveButton(restartButton, false);
             SetUpScore(registries);
             StartCoroutine(PerformFade(0.3f, true, endMenu));
             _currentCanvasGroup = endMenu;
+        }
+
+        private void RemoveButton(Button button, bool remove = true)
+        {
+            restartButton.interactable = !remove;
+            restartButton.gameObject.SetActive(!remove);
         }
         
         private void SetUpScore(List<GameplayManager.PlayerScoreRegistry> registries)
@@ -90,7 +100,7 @@ namespace Managers
             //Todo: fix score
             maxScoreText.text = string.Empty;
             minScoreText.text = string.Empty;
-            if (MainManager.Instance.GameplayManager.CurrentGameMode == GameplayManager.GameMode.Enemy)
+            if (MainManager.Instance.GameplayManager.CurrentGameMode == GameplayManager.GameMode.Survival)
             {
                 foreach (var registry in registries)
                 {
@@ -102,20 +112,28 @@ namespace Managers
             }
             else
             {
-                GameplayManager.PlayerScoreRegistry maxScoreRegistry = registries[0];
-                GameplayManager.PlayerScoreRegistry secondMaxScoreRegistry = new GameplayManager.PlayerScoreRegistry();
+                //If registry fails, dont show score
+                if(registries.Count == 0) return;
+                
+                //Set up scores
+                var maxScoreRegistry = registries[0];
+                var secondMaxScoreRegistry = new GameplayManager.PlayerScoreRegistry();
 
+                var currentMaxScore = 0;
                 for (var i = 0; i < registries.Count; i++)
                 {
-                    if (registries[i].score < maxScoreRegistry.score) continue;
+                    if (registries[i].score <= maxScoreRegistry.score) continue;
+                    currentMaxScore = i;
                     secondMaxScoreRegistry = maxScoreRegistry;
                     maxScoreRegistry = registries[i];
                 }
 
                 if (string.IsNullOrEmpty(secondMaxScoreRegistry.playerName))
                 {
-                    //if couldn't find another, pick second on registry
-                    secondMaxScoreRegistry = registries[1];
+                    //if couldn't find another, pick next closes registry
+                    currentMaxScore += 1;
+                    currentMaxScore = (currentMaxScore + registries.Count) % registries.Count;
+                    secondMaxScoreRegistry = registries[currentMaxScore];
                 }
                 
                 maxScoreText.text = maxScoreRegistry.playerName + Score + maxScoreRegistry.score;

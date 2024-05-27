@@ -364,6 +364,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &397458252 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4464818415413982861, guid: 7eeffccb6373a144c88059d4d6885b73, type: 3}
+  m_PrefabInstance: {fileID: 4464818413999822638}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -700,6 +711,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   menuBackground: {fileID: 2584411899898900772}
   mainMenu: {fileID: 989370179}
+  restartButton: {fileID: 397458252}
   gameModeText: {fileID: 1754734628}
   gameDifficultyText: {fileID: 805722994}
   endMenu: {fileID: 1299343336}
@@ -1060,7 +1072,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 169198372770726249, guid: fca2e96f65a27dd4194d002d744335d8, type: 3}
       propertyPath: m_Alpha
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 169198372770726251, guid: fca2e96f65a27dd4194d002d744335d8, type: 3}
       propertyPath: m_Name
@@ -1330,7 +1342,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4464818415263510726, guid: 7eeffccb6373a144c88059d4d6885b73, type: 3}
       propertyPath: m_Alpha
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4464818415263510730, guid: 7eeffccb6373a144c88059d4d6885b73, type: 3}
       propertyPath: m_Name

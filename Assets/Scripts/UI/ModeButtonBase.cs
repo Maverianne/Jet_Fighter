@@ -22,7 +22,6 @@ namespace UI
         protected int MaxType { get; set; }
         
 
-
         public virtual void PressButton(bool moveRight)
         {
             if (IsMoving) return;

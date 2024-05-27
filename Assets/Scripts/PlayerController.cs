@@ -4,7 +4,12 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : Spaceship
 {
-    
+    public override void StartGame()
+    {
+        base.StartGame();
+        MyStats.SetInfo(MyScore, SpaceshipName, CurrentSpaceShipParameters.impulseCoolDown);
+    }
+
     protected override void DisableShip()
     {
         base.DisableShip();

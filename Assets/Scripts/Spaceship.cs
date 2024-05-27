@@ -32,11 +32,11 @@ public class Spaceship : ScreenWrapObject
     public bool CanPlay { get; set; }
 
     protected GameObject ProjectileSpawnPoint => projectileSpawnPoint;
-    private bool CanImpulse => Time.unscaledTime > _lastImpulseTimeStamp + CurrentSpaceShipParameters.impulseCoolDown;
-
+    private float CurrentHealthPercentage => Mathf.Clamp01(_currentHealth / CurrentSpaceShipParameters.maxHealth);
+    public string SpaceshipName => spaceshipName;
+    public int MyScore => _myScore;
     private bool IsImpulsed => Time.unscaledTime < _lastImpulseTimeStamp + CurrentSpaceShipParameters.impulseDuration && _firstImpulseDone;
     private bool IsRotating => MovementInput != Vector3.zero;
-    private float CurrentHealthPercentage => Mathf.Clamp01(_currentHealth / CurrentSpaceShipParameters.maxHealth);
     
 
     protected override void Awake()
@@ -87,9 +87,11 @@ public class Spaceship : ScreenWrapObject
         _lastImpulseTimeStamp = Time.unscaledTime;
         _currentSpeed = CurrentSpaceShipParameters.speed;
         _currentHealth = CurrentSpaceShipParameters.maxHealth;
-        _myScore = MainManager.Instance.GameplayManager.GetScore(spaceshipName);
         _firstImpulseDone = false;
-        MyStats.SetInfo(_myScore, spaceshipName, CurrentSpaceShipParameters.impulseCoolDown);
+        
+        //register players and get past info
+        _myScore = MainManager.Instance.GameplayManager.GetScore(spaceshipName);
+        MainManager.Instance.GameplayManager.AttemptAddData(spaceshipName, _myScore);
     } 
     
     protected virtual void SetShipParameters()
@@ -114,7 +116,7 @@ public class Spaceship : ScreenWrapObject
     
     protected virtual void Impulse()
     {
-        if(!CanImpulse) return;
+        if(!MyStats.CanImpulse) return;
         _firstImpulseDone = true;
         MyStats.ResetImpulseSlider(CurrentSpaceShipParameters.impulseCoolDown);
         _lastImpulseTimeStamp = Time.unscaledTime;

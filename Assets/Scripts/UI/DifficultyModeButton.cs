@@ -7,11 +7,12 @@ namespace UI
     public class DifficultyModeButton : ModeButtonBase
     {
         [SerializeField] private DifficultyRecord[] difficultyRecords;
-        private bool CanPressButton => MainManager.Instance.GameplayManager.CurrentGameMode == GameplayManager.GameMode.Enemy;
+        private bool CanPressButton => MainManager.Instance.GameplayManager.CurrentGameMode == GameplayManager.GameMode.Survival;
 
         private void Start()
         {
             MaxType = difficultyRecords.Length;
+            TMPText.text = difficultyRecords[0].displayModeName;
         }
         
         public override void PressButton(bool moveRight)
