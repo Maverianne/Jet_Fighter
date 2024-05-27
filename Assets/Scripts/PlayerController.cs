@@ -41,9 +41,4 @@ public class PlayerController : Spaceship
         if (!context.action.triggered) return;
         Shooting();
     }
-
-    public void OnPause(InputAction.CallbackContext context)
-    {
-        
-    }
 }

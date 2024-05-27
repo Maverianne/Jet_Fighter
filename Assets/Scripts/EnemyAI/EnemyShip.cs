@@ -44,9 +44,7 @@ namespace EnemyAI
 
                 protected override void SetShipParameters()
                 {
-                        var difficulty = MainManager.Instance.GameplayManager.CurrentDifficulty;
-                        difficulty = difficulty == GameplayManager.Difficulty.None ? GameplayManager.Difficulty.Normal : difficulty;
-                        _enemyParameters = enemyBehaviourParameters.GetBehaviourParameters(difficulty);
+                        _enemyParameters = enemyBehaviourParameters.GetBehaviourParameters(MainManager.Instance.GameplayManager.CurrentDifficulty);
                         CurrentSpaceShipParameters = _enemyParameters.shipParameters;
                 }
 

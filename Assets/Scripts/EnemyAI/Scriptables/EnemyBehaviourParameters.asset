@@ -42,7 +42,7 @@ MonoBehaviour:
       rotatingSpeed: 3
       impulseSpeed: 50
       impulseCoolDown: 6
-      projectileSpeed: 5
+      projectileSpeed: 0.5
       projectileDistance: 20
     minAttackCoolDown: 3
     maxAttackCoolDown: 6

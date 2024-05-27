@@ -206,7 +206,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 35005113}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 166717703}
+        m_TargetAssemblyTypeName: UI.ModeButtonBase, Assembly-CSharp
+        m_MethodName: PressButton
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &35005113
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -292,7 +304,8 @@ MonoBehaviour:
   startPositions:
   - {fileID: 2024515051}
   - {fileID: 990510425}
-  playerPrefab: {fileID: 4898825685532307036, guid: d3d2d94e8861b2146914fd588dc891a1, type: 3}
+  player01Prefab: {fileID: 4898825685532307036, guid: d3d2d94e8861b2146914fd588dc891a1, type: 3}
+  player02Prefab: {fileID: 7880371544542176891, guid: ad31342198b45244398fece272f86fbc, type: 3}
   enemyPrefab: {fileID: 7880371544542176891, guid: e55def075c6a1974c86978294e7b5d6e, type: 3}
 --- !u!1 &103990211
 GameObject:
@@ -387,6 +400,7 @@ GameObject:
   m_Component:
   - component: {fileID: 165067257}
   - component: {fileID: 165067258}
+  - component: {fileID: 165067259}
   m_Layer: 5
   m_Name: GameMode
   m_TagString: Untagged
@@ -443,6 +457,26 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &165067259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 165067256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4748270b597241c89bc6c69d8f1cdfd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tmpText: {fileID: 1754734628}
+  gameModeRecords:
+  - myGameMode: 1
+    displayModeName: Enemy
+    mySavingValue: 1
+  - myGameMode: 2
+    displayModeName: 2 Players
+    mySavingValue: 2
 --- !u!1 &166717700
 GameObject:
   m_ObjectHideFlags: 0
@@ -453,6 +487,7 @@ GameObject:
   m_Component:
   - component: {fileID: 166717701}
   - component: {fileID: 166717702}
+  - component: {fileID: 166717703}
   m_Layer: 5
   m_Name: Difficulty
   m_TagString: Untagged
@@ -509,6 +544,29 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &166717703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 166717700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc86981b1a094e4ebcc247c1da945ba7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tmpText: {fileID: 805722994}
+  difficultyRecords:
+  - myDifficulty: 1
+    displayModeName: Easy
+    mySavingValue: 1
+  - myDifficulty: 2
+    displayModeName: Normal
+    mySavingValue: 2
+  - myDifficulty: 3
+    displayModeName: Hard
+    mySavingValue: 3
 --- !u!1 &189741461
 GameObject:
   m_ObjectHideFlags: 0
@@ -1987,7 +2045,7 @@ GameObject:
   - component: {fileID: 805722995}
   - component: {fileID: 805722994}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: DifficultyText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2068,7 +2126,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 16
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -2689,6 +2747,8 @@ MonoBehaviour:
   mainMenu: {fileID: 989370179}
   endMenu: {fileID: 1299343336}
   endMenuText: {fileID: 383592773}
+  gameModeText: {fileID: 1754734628}
+  gameDifficultyText: {fileID: 805722994}
 --- !u!1 &1291383113
 GameObject:
   m_ObjectHideFlags: 0
@@ -2772,7 +2832,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1291383116}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 166717703}
+        m_TargetAssemblyTypeName: UI.ModeButtonBase, Assembly-CSharp
+        m_MethodName: PressButton
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!114 &1291383116
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2897,7 +2969,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1299343332}
   m_Enabled: 1
-  m_Alpha: 0
+  m_Alpha: 1
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -3073,7 +3145,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.09874566, y: 0.9129542}
   m_AnchorMax: {x: 0.09874566, y: 0.9129542}
-  m_AnchoredPosition: {x: 1567.11, y: 3.876648}
+  m_AnchoredPosition: {x: 1567.11, y: 3.876709}
   m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1369625016
@@ -3298,7 +3370,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1406711766}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 165067259}
+        m_TargetAssemblyTypeName: UI.ModeButtonBase, Assembly-CSharp
+        m_MethodName: PressButton
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: UI.ModeButtonBase, Assembly-CSharp
+        m_MethodName: PressButton
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1406711766
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3554,7 +3650,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1548218269}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 390094760}
+        m_TargetAssemblyTypeName: Managers.MainManager, Assembly-CSharp
+        m_MethodName: ExitGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1548218269
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3632,7 +3740,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.29522917, y: 0.1987778}
   m_AnchorMax: {x: 0.69543755, y: 0.7984815}
-  m_AnchoredPosition: {x: 0, y: 0.000030517578}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1668220677
@@ -3750,7 +3858,7 @@ GameObject:
   - component: {fileID: 1754734629}
   - component: {fileID: 1754734628}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: GameModeTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3829,7 +3937,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 16
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -4306,7 +4414,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1998193366}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 165067259}
+        m_TargetAssemblyTypeName: UI.ModeButtonBase, Assembly-CSharp
+        m_MethodName: PressButton
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!114 &1998193366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4459,7 +4579,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2047258278}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1143689088}
+        m_TargetAssemblyTypeName: Managers.UIManager, Assembly-CSharp
+        m_MethodName: GoToMainMenu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2047258278
 MonoBehaviour:
   m_ObjectHideFlags: 0

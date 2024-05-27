@@ -9,7 +9,8 @@ namespace Managers
     public class GameplayManager : MonoBehaviour
     {
         [SerializeField] private GameObject[] startPositions;
-        [SerializeField] private GameObject playerPrefab;
+        [SerializeField] private GameObject player01Prefab;
+        [SerializeField] private GameObject player02Prefab;
         [SerializeField] private GameObject enemyPrefab;
         
         private bool _startedGame;
@@ -28,12 +29,12 @@ namespace Managers
             switch (CurrentGameMode)
             {
                 case GameMode.Enemy:
-                    _playerOne = InstantiatePlayer(startPositions[0].transform.position, _playerOne);
-                    InstantiateEnemy(startPositions[1].transform.position, false);
+                    _playerOne = InstantiatePlayer(startPositions[0].transform.position, _playerOne, player01Prefab);
+                    InstantiateEnemy(startPositions[1].transform.position);
                     break;
                 case GameMode.TwoPlayers:
-                    _playerOne = InstantiatePlayer(startPositions[0].transform.position, _playerOne);
-                    _playerTwo = InstantiatePlayer(startPositions[0].transform.position, _playerTwo);
+                    _playerOne = InstantiatePlayer(startPositions[0].transform.position, _playerOne, player01Prefab);
+                    _playerTwo = InstantiatePlayer(startPositions[1].transform.position, _playerTwo, player02Prefab);
                     break;
             }
             MainManager.Instance.UIManager.StartGame();
@@ -76,6 +77,7 @@ namespace Managers
             }
         }
         
+        
         private void StartPlayers()
         {
             var sliders = MainManager.Instance.UIManager.Sliders;
@@ -102,14 +104,9 @@ namespace Managers
             playerController.StartGame();
         }
         
-        private PlayerController InstantiatePlayer(Vector3 pos, PlayerController checkPlayer)
+        private PlayerController InstantiatePlayer(Vector3 pos, PlayerController checkPlayer, GameObject playerPrefab)
         {
-            if (checkPlayer != null)
-            {
-                checkPlayer.gameObject.SetActive(true);
-                checkPlayer.SetUpSpaceship(pos);
-                return checkPlayer;
-            }
+            if (checkPlayer != null) Destroy(checkPlayer.gameObject);
             var newPlayer = Instantiate(playerPrefab);
             var player = newPlayer.GetComponent<PlayerController>();
             player.SetUpSpaceship(pos);
@@ -125,15 +122,8 @@ namespace Managers
         }
         private void InstantiateEnemy(Vector3 pos, bool checkNull = true)
         {
-            if (checkNull)
-            {
-                if (_enemyShip != null)
-                {
-                    _enemyShip.SetUpSpaceship(pos);
-                    _enemyShip.gameObject.SetActive(true);
-                    return;
-                }
-            }
+            
+            if (_enemyShip != null) Destroy(_enemyShip);
             var newEnemy = Instantiate(enemyPrefab);
             var enemy = newEnemy.GetComponent<EnemyShip>();
             enemy.transform.position = pos;
@@ -142,13 +132,14 @@ namespace Managers
         
         public enum GameMode
         {
-            Enemy = 0, 
-            TwoPlayers = 1 
+            None = 0, 
+            Enemy = 1, 
+            TwoPlayers = 2 
         }
         
         public enum Difficulty 
-        {
-            None = 0, 
+        {   
+            None = 0,
             Easy = 1, 
             Normal = 2, 
             Hard = 3
