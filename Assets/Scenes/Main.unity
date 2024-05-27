@@ -1228,10 +1228,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -2
       objectReference: {fileID: 0}
-    - target: {fileID: 714170275653198818, guid: e7658779a51a90e48820c12773045f80, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 72092595}
     - target: {fileID: 3755727923096138796, guid: e7658779a51a90e48820c12773045f80, type: 3}
       propertyPath: m_Name
       value: Instructions
@@ -1384,7 +1380,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2584411899898900774}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0

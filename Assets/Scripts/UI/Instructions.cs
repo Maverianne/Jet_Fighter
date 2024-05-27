@@ -28,9 +28,11 @@ namespace UI
         public void NextSlide()
         {
             if(_changingSlides) return;
-            _changingSlides = true; 
-            slides[_currentSlide].alpha = 0;
+            _changingSlides = true;
+            
+            var previousSlide = _currentSlide;
             _currentSlide += 1;
+            
             
             if (TerminateSlide)
             {
@@ -38,6 +40,7 @@ namespace UI
                 return;
             }
             
+            slides[previousSlide].alpha = 0;
             StartCoroutine(PerformFade(0.5f, true, slides[_currentSlide]));
         }
 
