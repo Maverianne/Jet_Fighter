@@ -52,6 +52,7 @@ namespace UI
             instructionsCanvasGroup.blocksRaycasts = false;
             MainManager.Instance.UIManager.OpenMainMenu();
         }
+        
         private IEnumerator PerformFade(float duration, bool fadeIn, CanvasGroup canvasGroup)
         {
             var timer = 0f;
@@ -69,7 +70,6 @@ namespace UI
                
                 yield return null;
             }
-
             _changingSlides = false;
         }
     }
