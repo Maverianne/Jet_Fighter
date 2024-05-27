@@ -22,6 +22,7 @@ namespace UI
                 slide.alpha = 0;
             }
 
+            instructionsCanvasGroup.alpha = 1;
             slides[_currentSlide].alpha = 1;
         }
 

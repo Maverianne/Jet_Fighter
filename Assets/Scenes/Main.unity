@@ -1228,6 +1228,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -2
       objectReference: {fileID: 0}
+    - target: {fileID: 3755727923096138784, guid: e7658779a51a90e48820c12773045f80, type: 3}
+      propertyPath: m_Alpha
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3755727923096138796, guid: e7658779a51a90e48820c12773045f80, type: 3}
       propertyPath: m_Name
       value: Instructions
@@ -1430,6 +1434,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1143689087}
     m_Modifications:
+    - target: {fileID: 2026516585528292558, guid: 7eeffccb6373a144c88059d4d6885b73, type: 3}
+      propertyPath: m_wordSpacing
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 4464818414972811658, guid: 7eeffccb6373a144c88059d4d6885b73, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1574,6 +1582,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 72092595}
+    - target: {fileID: 6073000704841323142, guid: 7eeffccb6373a144c88059d4d6885b73, type: 3}
+      propertyPath: m_wordSpacing
+      value: 20
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7eeffccb6373a144c88059d4d6885b73, type: 3}
 --- !u!224 &4464818415583874351 stripped

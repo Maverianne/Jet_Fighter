@@ -87,6 +87,7 @@ namespace Managers
             
             maxScoreText.text = string.Empty;
             minScoreText.text = string.Empty;
+            
             //If registry is empty, dont show score
             if(registries.Count == 0) return;
             foreach (var registry in registries)
@@ -111,13 +112,12 @@ namespace Managers
 
         private void RemoveButton(Button button, bool remove = true)
         {
-            restartButton.interactable = !remove;
-            restartButton.gameObject.SetActive(!remove);
+            button.interactable = !remove;
+            button.gameObject.SetActive(!remove);
         }
         
         private void SetUpScore(List<GameplayManager.PlayerScoreRegistry> registries)
         {
-            //Todo: fix score
             maxScoreText.text = string.Empty;
             minScoreText.text = string.Empty;
             //If registry is empty, dont show score
