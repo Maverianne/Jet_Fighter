@@ -7,6 +7,8 @@ public class ScreenWrapObject : MonoBehaviour
     private Camera _mainCamera;
     private Direction _exitDirection;
 
+    protected bool CanCheckScreenBounds => _canCheckScreenBounds;
+
     protected virtual void Awake()
     {
         _mainCamera = Camera.main;
@@ -53,13 +55,7 @@ public class ScreenWrapObject : MonoBehaviour
         if(!_canCheckScreenBounds) return;;
         _canCheckScreenBounds = false;
         transform.position = GetWrapPosition(_exitDirection);
-        AddScreenOffImpulse();
         StartCoroutine(PerformPlaneExitWrap(_exitDirection));
-    }
-
-    protected virtual void AddScreenOffImpulse()
-    {
-        
     }
 
     private Vector2 GetWrapPosition(Direction direction)

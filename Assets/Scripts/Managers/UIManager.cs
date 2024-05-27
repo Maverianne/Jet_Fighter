@@ -9,6 +9,7 @@ namespace Managers
     public class UIManager : MonoBehaviour
     {
 
+        [SerializeField] private CanvasGroup menuBackground;
         [SerializeField] private CanvasGroup mainMenu;
         [SerializeField] private CanvasGroup endMenu;
         [SerializeField] private TMP_Text endMenuText;
@@ -51,10 +52,10 @@ namespace Managers
 
         public void GoToMainMenu()
         {
-            StartCoroutine(PerformFade(0.3f, false, _currentCanvasGroup));
+            endMenu.alpha = 0;
+            SetUpCanvasInteractable(endMenu, false);
             _currentCanvasGroup = mainMenu;
-            mainMenu.alpha = 1;
-            SetUpCanvasInteractable(mainMenu, true);
+            StartCoroutine(PerformFade(0.3f, true, _currentCanvasGroup, false));
         }
 
         private void SetMenuModes()
@@ -81,7 +82,7 @@ namespace Managers
             _currentCanvasGroup = endMenu;
         }
 
-        private IEnumerator PerformFade(float duration, bool fadeIn, CanvasGroup canvasGroup)
+        private IEnumerator PerformFade(float duration, bool fadeIn, CanvasGroup canvasGroup, bool fadeBackground = true)
         {
             SetUpCanvasInteractable(canvasGroup, fadeIn);
             
@@ -97,6 +98,7 @@ namespace Managers
                 var targetColorAlphaOnly = Mathf.Lerp(startAlpha, targetAlpha, progress);
                 
                 canvasGroup.alpha = targetColorAlphaOnly;
+                if (fadeBackground) menuBackground.alpha = targetColorAlphaOnly;
                
                 yield return null;
             }

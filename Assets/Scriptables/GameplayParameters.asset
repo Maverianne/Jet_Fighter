@@ -15,10 +15,11 @@ MonoBehaviour:
   playableSpaceshipParameters:
     maxHealth: 5
     speed: 2
-    speedIncrement: 0.3
+    speedIncrement: 0.4
     speedWhileRotating: 1
     rotatingSpeed: 2.5
-    impulseSpeed: 5
+    impulseSpeed: 3
+    impulseDuration: 1.5
     impulseCoolDown: 10
     projectileSpeed: 0.5
     projectileDistance: 20

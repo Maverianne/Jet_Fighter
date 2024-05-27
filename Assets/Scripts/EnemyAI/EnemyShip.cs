@@ -101,9 +101,9 @@ namespace EnemyAI
                         base.Impulse();
                 }
 
-                protected override void DestroyObject()
+                protected override void DisableShip()
                 {
-                        base.DestroyObject();
+                        base.DisableShip();
                         MainManager.Instance.GameplayManager.GameDone();
                 }
 

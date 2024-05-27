@@ -12,12 +12,13 @@ public class Spaceship : ScreenWrapObject
     private Animator _animator;
     private CircleCollider2D _collider2D;
     private Quaternion _startRotation;
-    
-    protected Rigidbody2D Rigidbody2D;
+
+    private Rigidbody2D _rigidbody2D;
     protected List<Projectile> MyProjectiles = new List<Projectile>();
     protected Vector3 MovementInput;
 
     private int _myScore;
+    private bool _firstImpulseDone;
     private float _currentSpeed;
     private float _lastImpulseTimeStamp;
     private float _currentHealth;
@@ -33,8 +34,7 @@ public class Spaceship : ScreenWrapObject
     protected GameObject ProjectileSpawnPoint => projectileSpawnPoint;
     private bool CanImpulse => Time.unscaledTime > _lastImpulseTimeStamp + CurrentSpaceShipParameters.impulseCoolDown;
 
-    private bool IsImpulsed => Time.unscaledTime < _lastImpulseTimeStamp + CurrentSpaceShipParameters.impulseDuration;
-    
+    private bool IsImpulsed => Time.unscaledTime < _lastImpulseTimeStamp + CurrentSpaceShipParameters.impulseDuration && _firstImpulseDone;
     private bool IsRotating => MovementInput != Vector3.zero;
     private float CurrentHealthPercentage => Mathf.Clamp01(_currentHealth / CurrentSpaceShipParameters.maxHealth);
     
@@ -42,15 +42,18 @@ public class Spaceship : ScreenWrapObject
     protected override void Awake()
     {
         base.Awake();
-        Rigidbody2D = GetComponent<Rigidbody2D>();
+        _rigidbody2D = GetComponent<Rigidbody2D>();
         _collider2D = GetComponent<CircleCollider2D>();
         _animator = GetComponent<Animator>();
         _startRotation = transform.rotation;
 
     }
 
+    #region SetUp - StartUp
+
     public void SetUpSpaceship(Vector3 startPosition)
     {
+        //Placing Ship on position
         CanPlay = false;
         transform.position = startPosition;
         transform.rotation = _startRotation;
@@ -58,14 +61,24 @@ public class Spaceship : ScreenWrapObject
     
     public virtual void StartGame()
     {
+        //Actually startGame
         SetShipParameters();
+        CanPlay = true;
         _lastImpulseTimeStamp = Time.unscaledTime;
         _currentSpeed = CurrentSpaceShipParameters.speed;
         _currentHealth = CurrentSpaceShipParameters.maxHealth;
-        CanPlay = true;
         _myScore = MainManager.Instance.GameplayManager.GetScore(spaceshipName);
+        _firstImpulseDone = false;
         MyStats.SetInfo(_myScore, spaceshipName, CurrentSpaceShipParameters.impulseCoolDown);
     } 
+    
+    protected virtual void SetShipParameters()
+    {
+        CurrentSpaceShipParameters = MainManager.Instance.GameplayParameters.PlayableSpaceshipParameters;
+    }
+
+    #endregion
+    
     protected virtual void Update()
     {
         if(!CanPlay) return;
@@ -85,17 +98,89 @@ public class Spaceship : ScreenWrapObject
         Rotate(MovementInput);
         MoveSpaceship();
     }
+    
+    protected virtual void Shooting()
+    { 
+        var projectilePrefabGo = Instantiate(projectile);
+        var projectilePrefab = projectilePrefabGo.GetComponent<Projectile>();
+        projectilePrefab.InitializeBullet(projectileSpawnPoint.transform.position, transform.rotation, CurrentSpaceShipParameters.projectileSpeed, CurrentSpaceShipParameters.projectileDistance);
+        MyProjectiles.Add(projectilePrefab);
+    }
+
+    #region Movement
 
     protected void MoveSpaceship()
     {
         if(IsImpulsed) return;
-        Rigidbody2D.velocity = -transform.up  * (Time.fixedDeltaTime * GetSpeed() * 100);
+        _rigidbody2D.velocity = -transform.up  * (Time.fixedDeltaTime * GetSpeed() * 100);
     }
 
     private void Rotate(Vector3 movementInput)
     {
-        transform.Rotate(movementInput * (Time.deltaTime * CurrentSpaceShipParameters.rotatingSpeed * 100));
+        transform.Rotate(movementInput * (Time.deltaTime * GetRotatingSpeed() * 100));
     }
+    
+    protected virtual void Impulse()
+    {
+        if(!CanImpulse) return;
+        _firstImpulseDone = true;
+        MyStats.ResetImpulseSlider(CurrentSpaceShipParameters.impulseCoolDown);
+        _lastImpulseTimeStamp = Time.unscaledTime;
+        _currentSpeed = 0;
+        _rigidbody2D.AddForce(-transform.up * CurrentSpaceShipParameters.impulseSpeed, ForceMode2D.Impulse);
+    }
+
+    #endregion
+    #region Damage - Terminate Spaceship
+
+    private void OnCollisionEnter2D(Collision2D col)
+    {
+        if(!col.gameObject.CompareTag(Projectile)) return;
+        col.gameObject.GetComponent<Projectile>().TerminateProjectile();
+        Damaged();
+    }
+    
+    private void Damaged()
+    {
+        _currentHealth--;
+        MyStats.SetHealthBar(CurrentHealthPercentage);
+    }
+    
+    private void TerminateSpaceship()
+    {
+        //ship destroyed, play animation
+        CanPlay = false;
+        MyStats.gameObject.SetActive(false);
+        _animator.SetBool(Exp, true);
+    }
+
+    public void FinishedGame()
+    {
+        //if still alive after game is done
+        //this ship is the winner, add to score
+        //disable ship
+        
+        CanPlay = false;
+        _myScore++;
+        MainManager.Instance.GameplayManager.AttemptAddData(spaceshipName, _myScore);
+        MyStats.gameObject.SetActive(false);
+        gameObject.SetActive(false);
+    }
+ 
+    protected virtual void DisableShip()
+    {
+        //disable on animation event
+        gameObject.SetActive(false);
+    }
+
+    #endregion
+    #region Getters
+
+    protected virtual float GetRotatingSpeed()
+    {
+        return CurrentSpaceShipParameters.rotatingSpeed;
+    }
+  
     
     private float GetSpeed()
     {
@@ -112,57 +197,5 @@ public class Spaceship : ScreenWrapObject
         return _currentSpeed;
     }
 
-    protected virtual void Impulse()
-    {
-         if(!CanImpulse) return;
-         MyStats.ResetImpulseSlider(CurrentSpaceShipParameters.impulseCoolDown);
-        _lastImpulseTimeStamp = Time.unscaledTime;
-        Rigidbody2D.AddForce(-transform.up * (CurrentSpaceShipParameters.impulseSpeed), ForceMode2D.Impulse);
-    }
-
-    protected virtual void Shooting()
-    { 
-        var projectilePrefabGo = Instantiate(projectile);
-        var projectilePrefab = projectilePrefabGo.GetComponent<Projectile>();
-        projectilePrefab.InitializeBullet(projectileSpawnPoint.transform.position, transform.rotation, CurrentSpaceShipParameters.projectileSpeed, CurrentSpaceShipParameters.projectileDistance);
-        MyProjectiles.Add(projectilePrefab);
-    }
-
-    protected virtual void SetShipParameters()
-    {
-        CurrentSpaceShipParameters = MainManager.Instance.GameplayParameters.PlayableSpaceshipParameters;
-    }
-
-    private void Damaged()
-    {
-        _currentHealth--;
-        MyStats.SetHealthBar(CurrentHealthPercentage);
-    }
-
-    public void FinishedGame()
-    {
-        CanPlay = false;
-        _myScore++;
-        MainManager.Instance.GameplayManager.AttemptAddData(spaceshipName, _myScore);
-        MyStats.gameObject.SetActive(false);
-        gameObject.SetActive(false);
-    }
-    private void TerminateSpaceship()
-    {
-        CanPlay = false;
-        MyStats.gameObject.SetActive(false);
-        _animator.SetBool(Exp, true);
-    }
-
-    protected virtual void DestroyObject()
-    {
-        gameObject.SetActive(false);
-    }
-
-    private void OnCollisionEnter2D(Collision2D col)
-    {
-        if(!col.gameObject.CompareTag(Projectile)) return;
-        col.gameObject.GetComponent<Projectile>().TerminateProjectile();
-        Damaged();
-    }
+    #endregion
 }

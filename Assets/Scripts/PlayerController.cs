@@ -4,22 +4,22 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : Spaceship
 {
-    private const float SmallImpulse = 10f;
     
-    protected override void DestroyObject()
+    protected override void DisableShip()
     {
-        base.DestroyObject();
+        base.DisableShip();
         MainManager.Instance.GameplayManager.GameDone(false);
+    }
+
+    protected override float GetRotatingSpeed()
+    {
+        //Stop rotation so player doesn't accidentally rotate out of screen
+        return CanCheckScreenBounds ? CurrentSpaceShipParameters.rotatingSpeed : 0f;
     }
 
     public void OnRotate(InputAction.CallbackContext context)
     {
         MovementInput = context.ReadValue<Vector3>();
-    }
-
-    protected override void AddScreenOffImpulse()
-    {
-        Rigidbody2D.AddForce(-transform.up * SmallImpulse);
     }
 
     public void OnImpulse(InputAction.CallbackContext context)
