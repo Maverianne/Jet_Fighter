@@ -1,8 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using EnemyAI;
 using UI;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Managers
 {
@@ -18,14 +19,22 @@ namespace Managers
         private PlayerController _playerOne;
         private PlayerController _playerTwo;
         private EnemyShip _enemyShip;
+        private List<PlayerScoreRegistry> _playerScores = new List<PlayerScoreRegistry>();
         
         public GameMode CurrentGameMode { get; set; }
         public Difficulty CurrentDifficulty { get; set; }
 
-        public void SetUpGame()
+        public void SetUpGame( bool newGame)
         {
             if(_startedGame) return;
             _startedGame = true;
+
+            if (newGame)
+            {
+                _playerScores.Clear();
+                _playerScores = new List<PlayerScoreRegistry>();
+            }
+            
             switch (CurrentGameMode)
             {
                 case GameMode.Enemy:
@@ -80,28 +89,28 @@ namespace Managers
         
         private void StartPlayers()
         {
-            var sliders = MainManager.Instance.UIManager.Sliders;
+            var sliders = MainManager.Instance.UIManager.PlayerInfo;
             switch (CurrentGameMode)
             {
                 case GameMode.Enemy:
                     foreach (var slider in sliders) slider.gameObject.SetActive(false);
-                    StartPlayer(_playerOne, sliders[0]);
-                    _enemyShip.StartGame();
+                    StartSpaceShip(_playerOne, sliders[0]);
+                    StartSpaceShip(_enemyShip, sliders[1]);
                     break;
                 case GameMode.TwoPlayers:
                     foreach (var slider in sliders) slider.gameObject.SetActive(false);
-                    StartPlayer(_playerOne,sliders[0]);
-                    StartPlayer(_playerTwo,sliders[1]);
+                    StartSpaceShip(_playerOne,sliders[0]);
+                    StartSpaceShip(_playerTwo,sliders[1]);
                     break;
             }
         }
         
         
-        private void StartPlayer(PlayerController playerController, Slider slider)
+        private void StartSpaceShip(Spaceship spaceship, PlayerInfo playerInfo)
         {
-            slider.gameObject.SetActive(true);
-            playerController.MySlider = slider.GetComponent<ImpulseSlider>();
-            playerController.StartGame();
+            playerInfo.gameObject.SetActive(true);
+            spaceship.MyStats = playerInfo.GetComponent<PlayerInfo>();
+            spaceship.StartGame();
         }
         
         private PlayerController InstantiatePlayer(Vector3 pos, PlayerController checkPlayer, GameObject playerPrefab)
@@ -111,15 +120,8 @@ namespace Managers
             var player = newPlayer.GetComponent<PlayerController>();
             player.SetUpSpaceship(pos);
             return player;
-        }
-
-
-        private IEnumerator PerformStartGame(float delay = 1f)
-        {
-            yield return new WaitForSeconds(delay);
-            StartPlayers();
-            _startedGame = false;
-        }
+        } 
+        
         private void InstantiateEnemy(Vector3 pos, bool checkNull = true)
         {
             
@@ -128,6 +130,47 @@ namespace Managers
             var enemy = newEnemy.GetComponent<EnemyShip>();
             enemy.transform.position = pos;
             _enemyShip = enemy;
+        }
+
+        public void AttemptAddData(string playerName, int score)
+        {
+            var playerRegistry = new PlayerScoreRegistry()
+            {
+                playerName = playerName,
+                score = score,
+            };
+            for (var i = 0; i < _playerScores.Count; i++)
+            {
+                if (_playerScores[i].playerName != playerName) continue;
+                _playerScores[i] = playerRegistry;
+                return;
+            }
+            _playerScores.Add(playerRegistry);
+        }
+
+        public int GetScore(string playerName)
+        {
+            for (var i = 0; i < _playerScores.Count; i++)
+            {
+                if (_playerScores[i].playerName != playerName) continue;
+                return _playerScores[i].score;
+            }
+
+            return 0;
+        }
+        private IEnumerator PerformStartGame(float delay = 1f)
+        {
+            yield return new WaitForSeconds(delay);
+            StartPlayers();
+            _startedGame = false;
+        }
+
+
+        [Serializable]
+        public struct PlayerScoreRegistry
+        {
+            public string playerName;
+            public int score;
         }
         
         public enum GameMode

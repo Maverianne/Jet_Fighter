@@ -7,7 +7,6 @@ namespace EnemyAI
 {
         public class EnemyShip : Spaceship
         {
-                [SerializeField] private EnemyBehaviourParameters enemyBehaviourParameters;
 
                 private float _zRot;
                 private float _lastAttackTimeStamp;
@@ -44,11 +43,15 @@ namespace EnemyAI
 
                 protected override void SetShipParameters()
                 {
-                        _enemyParameters = enemyBehaviourParameters.GetBehaviourParameters(MainManager.Instance.GameplayManager.CurrentDifficulty);
+                        _enemyParameters = MainManager.Instance.EnemyBehaviourParameters.GetBehaviourParameters(MainManager.Instance.GameplayManager.CurrentDifficulty);
                         CurrentSpaceShipParameters = _enemyParameters.shipParameters;
                 }
 
-                protected override void FixedUpdate() { }
+                protected override void FixedUpdate()
+                {
+                        if(!CanPlay) return;
+                        MoveSpaceship();
+                }
                 
                 private void SelectNextBehaviour()
                 {
@@ -98,9 +101,9 @@ namespace EnemyAI
                         base.Impulse();
                 }
 
-                protected override void TerminateSpaceship()
+                protected override void DestroyObject()
                 {
-                        base.TerminateSpaceship();
+                        base.DestroyObject();
                         MainManager.Instance.GameplayManager.GameDone();
                 }
 

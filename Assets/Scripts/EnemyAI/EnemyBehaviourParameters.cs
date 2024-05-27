@@ -27,7 +27,7 @@ namespace EnemyAI
           
 
             public GameplayManager.Difficulty difficulty = GameplayManager.Difficulty.Normal;
-            public Spaceship.SpaceshipParameters shipParameters;
+            public  GameplayParameters.SpaceshipParameters shipParameters;
 
             [Header("Enemy Parameters")] 
             

@@ -1,45 +1,48 @@
-using System;
 using System.Collections.Generic;
+using Managers;
+using UI;
 using UnityEngine;
 
 public class Spaceship : ScreenWrapObject
 {
-
-    [SerializeField] private SpaceshipParameters defaultShipParameters; 
+    [SerializeField] private string spaceshipName;
     [SerializeField] private GameObject projectileSpawnPoint;
     [SerializeField] private GameObject projectile;
 
-    protected Rigidbody2D _rigidbody2D;
     private Animator _animator;
     private CircleCollider2D _collider2D;
     private Quaternion _startRotation;
     
+    protected Rigidbody2D Rigidbody2D;
     protected List<Projectile> MyProjectiles = new List<Projectile>();
     protected Vector3 MovementInput;
-    
+
+    private int _myScore;
     private float _currentSpeed;
     private float _lastImpulseTimeStamp;
     private float _currentHealth;
     private float _velocityBeforeImpulse;
     
+    public PlayerInfo MyStats { get; set; }
     private static readonly int Exp = Animator.StringToHash("expl");
     protected const string Projectile = "Projectile";
     
-    protected SpaceshipParameters CurrentSpaceShipParameters { get; set; }
+    protected GameplayParameters.SpaceshipParameters CurrentSpaceShipParameters { get; set; }
     public bool CanPlay { get; set; }
 
     protected GameObject ProjectileSpawnPoint => projectileSpawnPoint;
-    protected bool CanImpulse => Time.unscaledTime > _lastImpulseTimeStamp + CurrentSpaceShipParameters.impulseCoolDown;
+    private bool CanImpulse => Time.unscaledTime > _lastImpulseTimeStamp + CurrentSpaceShipParameters.impulseCoolDown;
+
+    private bool IsImpulsed => Time.unscaledTime < _lastImpulseTimeStamp + CurrentSpaceShipParameters.impulseDuration;
     
     private bool IsRotating => MovementInput != Vector3.zero;
-   
     private float CurrentHealthPercentage => Mathf.Clamp01(_currentHealth / CurrentSpaceShipParameters.maxHealth);
     
 
     protected override void Awake()
     {
         base.Awake();
-        _rigidbody2D = GetComponent<Rigidbody2D>();
+        Rigidbody2D = GetComponent<Rigidbody2D>();
         _collider2D = GetComponent<CircleCollider2D>();
         _animator = GetComponent<Animator>();
         _startRotation = transform.rotation;
@@ -60,8 +63,9 @@ public class Spaceship : ScreenWrapObject
         _currentSpeed = CurrentSpaceShipParameters.speed;
         _currentHealth = CurrentSpaceShipParameters.maxHealth;
         CanPlay = true;
-    }
-
+        _myScore = MainManager.Instance.GameplayManager.GetScore(spaceshipName);
+        MyStats.SetInfo(_myScore, spaceshipName, CurrentSpaceShipParameters.impulseCoolDown);
+    } 
     protected virtual void Update()
     {
         if(!CanPlay) return;
@@ -70,7 +74,6 @@ public class Spaceship : ScreenWrapObject
             CanPlay = false;
             TerminateSpaceship();
         }
-        MoveSpaceship();
      
         if(!IsOutsideScreen(_collider2D.radius/2)) return;
         WrapPosition();
@@ -80,11 +83,13 @@ public class Spaceship : ScreenWrapObject
     {
         if(!CanPlay) return;
         Rotate(MovementInput);
+        MoveSpaceship();
     }
 
-    private void MoveSpaceship()
+    protected void MoveSpaceship()
     {
-        transform.position -= transform.up * (Time.deltaTime * GetSpeed());
+        if(IsImpulsed) return;
+        Rigidbody2D.velocity = -transform.up  * (Time.fixedDeltaTime * GetSpeed() * 100);
     }
 
     private void Rotate(Vector3 movementInput)
@@ -103,14 +108,16 @@ public class Spaceship : ScreenWrapObject
         if (_currentSpeed > CurrentSpaceShipParameters.speed) return _currentSpeed;
         
         _currentSpeed += CurrentSpaceShipParameters.speedIncrement;
+        
         return _currentSpeed;
     }
 
     protected virtual void Impulse()
     {
          if(!CanImpulse) return;
+         MyStats.ResetImpulseSlider(CurrentSpaceShipParameters.impulseCoolDown);
         _lastImpulseTimeStamp = Time.unscaledTime;
-        _rigidbody2D.AddForce(-transform.up * CurrentSpaceShipParameters.impulseSpeed);
+        Rigidbody2D.AddForce(-transform.up * (CurrentSpaceShipParameters.impulseSpeed), ForceMode2D.Impulse);
     }
 
     protected virtual void Shooting()
@@ -123,21 +130,31 @@ public class Spaceship : ScreenWrapObject
 
     protected virtual void SetShipParameters()
     {
-        CurrentSpaceShipParameters = defaultShipParameters;
+        CurrentSpaceShipParameters = MainManager.Instance.GameplayParameters.PlayableSpaceshipParameters;
+    }
+
+    private void Damaged()
+    {
+        _currentHealth--;
+        MyStats.SetHealthBar(CurrentHealthPercentage);
     }
 
     public void FinishedGame()
     {
         CanPlay = false;
+        _myScore++;
+        MainManager.Instance.GameplayManager.AttemptAddData(spaceshipName, _myScore);
+        MyStats.gameObject.SetActive(false);
         gameObject.SetActive(false);
     }
-    protected virtual void TerminateSpaceship()
+    private void TerminateSpaceship()
     {
         CanPlay = false;
+        MyStats.gameObject.SetActive(false);
         _animator.SetBool(Exp, true);
     }
 
-    private void DestroyObject()
+    protected virtual void DestroyObject()
     {
         gameObject.SetActive(false);
     }
@@ -146,23 +163,6 @@ public class Spaceship : ScreenWrapObject
     {
         if(!col.gameObject.CompareTag(Projectile)) return;
         col.gameObject.GetComponent<Projectile>().TerminateProjectile();
-        _currentHealth--;
-    }
-
-    [Serializable]
-    public class SpaceshipParameters
-    {
-        public float maxHealth;
-        [Header("Speed parameters")]
-        public float speed;
-        public float speedIncrement;
-        public float speedWhileRotating;
-        public float rotatingSpeed;
-        [Header("Impulse parameters")]
-        public float impulseSpeed;
-        public float impulseCoolDown;
-        [Header("Projectile parameters")]
-        public float projectileSpeed; 
-        public float projectileDistance;
+        Damaged();
     }
 }

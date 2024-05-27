@@ -1,16 +1,22 @@
-using System;
+using EnemyAI;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Managers
 {
     public class MainManager : MonoBehaviour
     {
+
+        [SerializeField] private GameplayParameters gameplayParameters;
+        [SerializeField] private EnemyBehaviourParameters enemyBehaviourParameters;
         public static MainManager Instance { get; private set; }
         public GameplayManager GameplayManager { get; private set; }
         public UIManager UIManager { get; private set; }
         
         private bool _isExiting;
+
+        public GameplayParameters GameplayParameters => gameplayParameters;
+
+        public EnemyBehaviourParameters EnemyBehaviourParameters => enemyBehaviourParameters;
 
         private void Awake()
         {

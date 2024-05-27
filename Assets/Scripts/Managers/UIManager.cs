@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using TMPro;
+using UI;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.UIElements.Experimental;
 
 namespace Managers
@@ -16,18 +16,18 @@ namespace Managers
         [SerializeField] private TMP_Text gameDifficultyText;
 
         private CanvasGroup _currentCanvasGroup;
-        private Slider[] _sliders;
+        private PlayerInfo[] _playerInfos;
 
         private const string GameOver = "Game Over";
         private const string Win = " Won!";
         private const string You = "You ";
         private const string Player = "Player ";
-        public Slider[] Sliders => _sliders;
+        public PlayerInfo[] PlayerInfo => _playerInfos;
 
         private void Awake()
         {
-            _sliders = GetComponentsInChildren<Slider>();
-            foreach (var slider in _sliders) slider.gameObject.SetActive(false);
+            _playerInfos = GetComponentsInChildren<PlayerInfo>();
+            foreach (var info in _playerInfos) info.gameObject.SetActive(false);
             
             mainMenu.alpha = 1;
             endMenu.alpha = 0;

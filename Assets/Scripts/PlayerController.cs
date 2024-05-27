@@ -1,30 +1,14 @@
 ﻿using Managers;
-using UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerController : Spaceship
 {
-
-    public ImpulseSlider MySlider { get; set; }
-
     private const float SmallImpulse = 10f;
-    public override void StartGame()
+    
+    protected override void DestroyObject()
     {
-        base.StartGame();
-        MySlider.ResetSlider(CurrentSpaceShipParameters.impulseCoolDown);
-    }
-
-    protected override void Impulse()
-    {
-        if(!CanImpulse) return;
-        base.Impulse();
-        MySlider.ResetSlider(CurrentSpaceShipParameters.impulseCoolDown);
-    }
-
-    protected override void TerminateSpaceship()
-    {
-        base.TerminateSpaceship();
+        base.DestroyObject();
         MainManager.Instance.GameplayManager.GameDone(false);
     }
 
@@ -35,7 +19,7 @@ public class PlayerController : Spaceship
 
     protected override void AddScreenOffImpulse()
     {
-        _rigidbody2D.AddForce(-transform.up * SmallImpulse);
+        Rigidbody2D.AddForce(-transform.up * SmallImpulse);
     }
 
     public void OnImpulse(InputAction.CallbackContext context)
