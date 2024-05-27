@@ -106,7 +106,7 @@ namespace Managers
                     if (win)
                     {
                         if (_playerOne.CanPlay) _playerOne.FinishedGame();
-                        MainManager.Instance.UIManager.SetPlayerWonGame(true);
+                        MainManager.Instance.UIManager.SetPlayerWonGame(_playerScores, true);
                     }
                     else
                     {
@@ -116,7 +116,7 @@ namespace Managers
                         
                     break;
                 case GameMode.TwoPlayers:
-                    var playerWinner = 0f;
+                    var playerWinner = 0;
                     if (_playerOne.CanPlay)
                     {
                         _playerOne.FinishedGame();
@@ -128,11 +128,12 @@ namespace Managers
                         _playerTwo.FinishedGame();
                         playerWinner = 2;
                     }
-                        
-                    MainManager.Instance.UIManager.SetPlayerWonGame(false, playerWinner);
+                    
+                    MainManager.Instance.UIManager.SetPlayerWonGame(_playerScores, false, playerWinner);
                     break;
             }
         }
+        
         #endregion
         
         #region Score

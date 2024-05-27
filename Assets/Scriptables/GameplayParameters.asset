@@ -15,7 +15,7 @@ MonoBehaviour:
   playableSpaceshipParameters:
     maxHealth: 5
     speed: 2
-    speedIncrement: 0.4
+    speedIncrement: 0.2
     speedWhileRotating: 1
     rotatingSpeed: 2.5
     impulseSpeed: 3

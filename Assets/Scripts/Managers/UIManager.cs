@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UI;
 using UnityEngine;
@@ -8,21 +9,27 @@ namespace Managers
 {
     public class UIManager : MonoBehaviour
     {
-
         [SerializeField] private CanvasGroup menuBackground;
+
+        [Header("Main Menu")]
         [SerializeField] private CanvasGroup mainMenu;
-        [SerializeField] private CanvasGroup endMenu;
-        [SerializeField] private TMP_Text endMenuText;
         [SerializeField] private TMP_Text gameModeText;
         [SerializeField] private TMP_Text gameDifficultyText;
+        
+        [Header("Game End Menu")]
+        [SerializeField] private CanvasGroup endMenu;
+        [SerializeField] private TMP_Text endMenuText;
+        [SerializeField] private TMP_Text maxScoreText;
+        [SerializeField] private TMP_Text minScoreText;
 
         private CanvasGroup _currentCanvasGroup;
         private PlayerInfo[] _playerInfos;
 
+        private const string Enemy = "Enemy";
         private const string GameOver = "Game Over";
+        private const string Score = " score: ";
         private const string Win = " Won!";
         private const string You = "You ";
-        private const string Player = "Player ";
         public PlayerInfo[] PlayerInfo => _playerInfos;
 
         private void Awake()
@@ -66,12 +73,54 @@ namespace Managers
             StartCoroutine(PerformFade(0.3f, true, endMenu));
             _currentCanvasGroup = endMenu;
         }
-        public void SetPlayerWonGame(bool isOnePlayer = false, float playerWinner = 0)
+
+       
+        public void SetPlayerWonGame(List<GameplayManager.PlayerScoreRegistry> registries, bool isOnePlayer = false, int winner = 0)
         {
+            
             if (isOnePlayer) endMenuText.text = You + Win;
-            else endMenuText.text = Player + playerWinner + Win;
+            else endMenuText.text = winner + Win;
+            SetUpScore(registries);
             StartCoroutine(PerformFade(0.3f, true, endMenu));
             _currentCanvasGroup = endMenu;
+        }
+        
+        private void SetUpScore(List<GameplayManager.PlayerScoreRegistry> registries)
+        {
+            //Todo: fix score
+            maxScoreText.text = string.Empty;
+            minScoreText.text = string.Empty;
+            if (MainManager.Instance.GameplayManager.CurrentGameMode == GameplayManager.GameMode.Enemy)
+            {
+                foreach (var registry in registries)
+                {
+                    if (registry.playerName == Enemy) continue;
+                    var playerRegistry = registry;
+                    maxScoreText.text = playerRegistry.playerName + Score + playerRegistry.score;
+                    break;
+                }
+            }
+            else
+            {
+                GameplayManager.PlayerScoreRegistry maxScoreRegistry = registries[0];
+                GameplayManager.PlayerScoreRegistry secondMaxScoreRegistry = new GameplayManager.PlayerScoreRegistry();
+
+                for (var i = 0; i < registries.Count; i++)
+                {
+                    if (registries[i].score < maxScoreRegistry.score) continue;
+                    secondMaxScoreRegistry = maxScoreRegistry;
+                    maxScoreRegistry = registries[i];
+                }
+
+                if (string.IsNullOrEmpty(secondMaxScoreRegistry.playerName))
+                {
+                    //if couldn't find another, pick second on registry
+                    secondMaxScoreRegistry = registries[1];
+                }
+                
+                maxScoreText.text = maxScoreRegistry.playerName + Score + maxScoreRegistry.score;
+                minScoreText.text = secondMaxScoreRegistry.playerName + Score + secondMaxScoreRegistry.score;
+            }
         }
         #endregion
         #region Update Canvas
