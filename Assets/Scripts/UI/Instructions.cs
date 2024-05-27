@@ -1,4 +1,5 @@
 using System.Collections;
+using Managers;
 using UnityEngine;
 using UnityEngine.UIElements.Experimental;
 
@@ -7,7 +8,7 @@ namespace UI
     public class Instructions : MonoBehaviour
     {
         [SerializeField] private CanvasGroup[] slides;
-        [SerializeField] private CanvasGroup intructionsCanvasGroup;
+        [SerializeField] private CanvasGroup instructionsCanvasGroup;
 
 
         private bool _changingSlides;
@@ -21,24 +22,33 @@ namespace UI
                 slide.alpha = 0;
             }
 
-            
             slides[_currentSlide].alpha = 1;
         }
 
         public void NextSlide()
         {
+            if(_changingSlides) return;
+            _changingSlides = true; 
+            slides[_currentSlide].alpha = 0;
+            _currentSlide += 1;
+            
             if (TerminateSlide)
             {
-                
+                TerminateInstructions();
+                return;
             }
-            slides[_currentSlide].alpha = 0;
+            
+            StartCoroutine(PerformFade(0.5f, true, slides[_currentSlide]));
         }
 
         private void TerminateInstructions()
         {
-            
+            StartCoroutine(PerformFade(0.5f, false, instructionsCanvasGroup));
+            instructionsCanvasGroup.interactable = false;
+            instructionsCanvasGroup.blocksRaycasts = false;
+            MainManager.Instance.UIManager.OpenMainMenu();
         }
-        private IEnumerator PerformFade(float duration, bool fadeIn, CanvasGroup canvasGroup, bool fadeBackground = true)
+        private IEnumerator PerformFade(float duration, bool fadeIn, CanvasGroup canvasGroup)
         {
             var timer = 0f;
             var startAlpha = canvasGroup.alpha;
@@ -55,6 +65,8 @@ namespace UI
                
                 yield return null;
             }
+
+            _changingSlides = false;
         }
     }
 }

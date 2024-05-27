@@ -25,6 +25,7 @@ namespace Managers
         [SerializeField] private TMP_Text minScoreText;
 
         private CanvasGroup _currentCanvasGroup;
+        private Instructions _instructions;
         private PlayerInfo[] _playerInfos;
 
         private const string Enemy = "Enemy";
@@ -38,12 +39,13 @@ namespace Managers
         private void Awake()
         {
             _playerInfos = GetComponentsInChildren<PlayerInfo>();
+            _instructions = GetComponentInChildren<Instructions>();
             foreach (var info in _playerInfos) info.gameObject.SetActive(false);
             
-            mainMenu.alpha = 1;
+            _instructions.SetUpInstructions();
+            mainMenu.alpha = 0;
             endMenu.alpha = 0;
-            _currentCanvasGroup = mainMenu;
-            SetUpCanvasInteractable(mainMenu, true);
+            SetUpCanvasInteractable(mainMenu, false);
             SetUpCanvasInteractable(endMenu, false);
             SetMenuModes();
         }
@@ -59,6 +61,12 @@ namespace Managers
             SetUpCanvasInteractable(endMenu, false);
             _currentCanvasGroup = mainMenu;
             StartCoroutine(PerformFade(0.3f, true, _currentCanvasGroup, false));
+        }
+        
+        public void OpenMainMenu()
+        {
+            _currentCanvasGroup = mainMenu;
+            StartCoroutine(PerformFade(0.3f, true, _currentCanvasGroup));
         }
 
         private void SetMenuModes()
