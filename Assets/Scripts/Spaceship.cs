@@ -10,10 +10,10 @@ public class Spaceship : ScreenWrapObject
     [SerializeField] private GameObject projectile;
 
     private Animator _animator;
-    private CircleCollider2D _collider2D;
     private Quaternion _startRotation;
-
     private Rigidbody2D _rigidbody2D;
+
+    protected CircleCollider2D Collider2D;
     protected List<Projectile> MyProjectiles = new List<Projectile>();
     protected Vector3 MovementInput;
 
@@ -43,7 +43,7 @@ public class Spaceship : ScreenWrapObject
     {
         base.Awake();
         _rigidbody2D = GetComponent<Rigidbody2D>();
-        _collider2D = GetComponent<CircleCollider2D>();
+        Collider2D = GetComponent<CircleCollider2D>();
         _animator = GetComponent<Animator>();
         _startRotation = transform.rotation;
 
@@ -57,7 +57,7 @@ public class Spaceship : ScreenWrapObject
             TerminateSpaceship();
         }
      
-        if(!IsOutsideScreen(_collider2D.radius/2)) return;
+        if(!IsOutsideScreen(Collider2D.radius/2)) return;
         WrapPosition();
     }
 
@@ -111,7 +111,8 @@ public class Spaceship : ScreenWrapObject
 
     private void Rotate(Vector3 movementInput)
     {
-        transform.Rotate(movementInput * (Time.deltaTime * GetRotatingSpeed() * 100));
+        var step = (Time.deltaTime * GetRotatingSpeed() * 100);
+        transform.Rotate(movementInput * step);
     }
     
     protected virtual void Impulse()

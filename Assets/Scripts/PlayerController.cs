@@ -19,7 +19,9 @@ public class PlayerController : Spaceship
     protected override float GetRotatingSpeed()
     {
         //Stop rotation so player doesn't accidentally rotate out of screen
-        return CanCheckScreenBounds ? CurrentSpaceShipParameters.rotatingSpeed : 0f;
+        var speed = 0f;
+        if (IsOutsideScreen(0)) return speed;
+        return CanCheckScreenBounds ? CurrentSpaceShipParameters.rotatingSpeed  : speed;
     }
 
     public void OnRotate(InputAction.CallbackContext context)
