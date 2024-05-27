@@ -48,8 +48,28 @@ public class Spaceship : ScreenWrapObject
         _startRotation = transform.rotation;
 
     }
+    protected virtual void Update()
+    {
+        if(!CanPlay) return;
+        if (CurrentHealthPercentage <= 0)
+        {
+            CanPlay = false;
+            TerminateSpaceship();
+        }
+     
+        if(!IsOutsideScreen(_collider2D.radius/2)) return;
+        WrapPosition();
+    }
 
-    #region SetUp - StartUp
+    protected virtual void FixedUpdate()
+    {
+        if(!CanPlay) return;
+        Rotate(MovementInput);
+        MoveSpaceship();
+    }
+
+
+    #region SetUp / StartUp
 
     public void SetUpSpaceship(Vector3 startPosition)
     {
@@ -78,36 +98,8 @@ public class Spaceship : ScreenWrapObject
     }
 
     #endregion
-    
-    protected virtual void Update()
-    {
-        if(!CanPlay) return;
-        if (CurrentHealthPercentage <= 0)
-        {
-            CanPlay = false;
-            TerminateSpaceship();
-        }
-     
-        if(!IsOutsideScreen(_collider2D.radius/2)) return;
-        WrapPosition();
-    }
 
-    protected virtual void FixedUpdate()
-    {
-        if(!CanPlay) return;
-        Rotate(MovementInput);
-        MoveSpaceship();
-    }
-    
-    protected virtual void Shooting()
-    { 
-        var projectilePrefabGo = Instantiate(projectile);
-        var projectilePrefab = projectilePrefabGo.GetComponent<Projectile>();
-        projectilePrefab.InitializeBullet(projectileSpawnPoint.transform.position, transform.rotation, CurrentSpaceShipParameters.projectileSpeed, CurrentSpaceShipParameters.projectileDistance);
-        MyProjectiles.Add(projectilePrefab);
-    }
-
-    #region Movement
+    #region Movement / Attack
 
     protected void MoveSpaceship()
     {
@@ -129,9 +121,17 @@ public class Spaceship : ScreenWrapObject
         _currentSpeed = 0;
         _rigidbody2D.AddForce(-transform.up * CurrentSpaceShipParameters.impulseSpeed, ForceMode2D.Impulse);
     }
-
+    
+    protected virtual void Shooting()
+    { 
+        var projectilePrefabGo = Instantiate(projectile);
+        var projectilePrefab = projectilePrefabGo.GetComponent<Projectile>();
+        projectilePrefab.InitializeBullet(projectileSpawnPoint.transform.position, transform.rotation, CurrentSpaceShipParameters.projectileSpeed, CurrentSpaceShipParameters.projectileDistance);
+        MyProjectiles.Add(projectilePrefab);
+    }
     #endregion
-    #region Damage - Terminate Spaceship
+    
+    #region Damage / Terminate Spaceship
 
     private void OnCollisionEnter2D(Collision2D col)
     {
@@ -174,6 +174,7 @@ public class Spaceship : ScreenWrapObject
     }
 
     #endregion
+    
     #region Getters
 
     protected virtual float GetRotatingSpeed()

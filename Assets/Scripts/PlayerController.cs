@@ -8,7 +8,7 @@ public class PlayerController : Spaceship
     protected override void DisableShip()
     {
         base.DisableShip();
-        MainManager.Instance.GameplayManager.GameDone(false);
+        MainManager.Instance.GameplayManager.GameRoundDone(false);
     }
 
     protected override float GetRotatingSpeed()

@@ -24,8 +24,10 @@ namespace Managers
         public GameMode CurrentGameMode { get; set; }
         public Difficulty CurrentDifficulty { get; set; }
 
+        #region Start/Set Up
         public void SetUpGame( bool newGame)
         {
+            //Set players in position
             if(_startedGame) return;
             _startedGame = true;
 
@@ -49,8 +51,54 @@ namespace Managers
             MainManager.Instance.UIManager.StartGame();
             StartCoroutine(PerformStartGame());
         }
+        
+        private void StartPlayers()
+        {
+            //Start Game Round
+            var playerInfos = MainManager.Instance.UIManager.PlayerInfo;
+            switch (CurrentGameMode)
+            {
+                case GameMode.Enemy:
+                    foreach (var playerInfo in playerInfos) playerInfo.gameObject.SetActive(false);
+                    StartSpaceShip(_playerOne, playerInfos[0]);
+                    StartSpaceShip(_enemyShip, playerInfos[1]);
+                    break;
+                case GameMode.TwoPlayers:
+                    foreach (var playerInfo in playerInfos) playerInfo.gameObject.SetActive(false);
+                    StartSpaceShip(_playerOne,playerInfos[0]);
+                    StartSpaceShip(_playerTwo,playerInfos[1]);
+                    break;
+            }
+        }
 
-        public void GameDone(bool win = true)
+        private void StartSpaceShip(Spaceship spaceship, PlayerInfo playerInfo)
+        {
+            playerInfo.gameObject.SetActive(true);
+            spaceship.MyStats = playerInfo.GetComponent<PlayerInfo>();
+            spaceship.StartGame();
+        }
+        
+        private PlayerController InstantiatePlayer(Vector3 pos, PlayerController checkPlayer, GameObject playerPrefab)
+        {
+            if (checkPlayer != null) Destroy(checkPlayer.gameObject);
+            var newPlayer = Instantiate(playerPrefab);
+            var player = newPlayer.GetComponent<PlayerController>();
+            player.SetUpSpaceship(pos);
+            return player;
+        } 
+        
+        private void InstantiateEnemy(Vector3 pos)
+        {
+            if (_enemyShip != null) Destroy(_enemyShip);
+            var newEnemy = Instantiate(enemyPrefab);
+            var enemy = newEnemy.GetComponent<EnemyShip>();
+            enemy.SetUpSpaceship(pos);
+            _enemyShip = enemy;
+        }
+        #endregion
+        
+        #region GameDone
+        public void GameRoundDone(bool win = true)
         {
             switch (CurrentGameMode)
             {
@@ -85,53 +133,9 @@ namespace Managers
                     break;
             }
         }
+        #endregion
         
-        
-        private void StartPlayers()
-        {
-            var sliders = MainManager.Instance.UIManager.PlayerInfo;
-            switch (CurrentGameMode)
-            {
-                case GameMode.Enemy:
-                    foreach (var slider in sliders) slider.gameObject.SetActive(false);
-                    StartSpaceShip(_playerOne, sliders[0]);
-                    StartSpaceShip(_enemyShip, sliders[1]);
-                    break;
-                case GameMode.TwoPlayers:
-                    foreach (var slider in sliders) slider.gameObject.SetActive(false);
-                    StartSpaceShip(_playerOne,sliders[0]);
-                    StartSpaceShip(_playerTwo,sliders[1]);
-                    break;
-            }
-        }
-        
-        
-        private void StartSpaceShip(Spaceship spaceship, PlayerInfo playerInfo)
-        {
-            playerInfo.gameObject.SetActive(true);
-            spaceship.MyStats = playerInfo.GetComponent<PlayerInfo>();
-            spaceship.StartGame();
-        }
-        
-        private PlayerController InstantiatePlayer(Vector3 pos, PlayerController checkPlayer, GameObject playerPrefab)
-        {
-            if (checkPlayer != null) Destroy(checkPlayer.gameObject);
-            var newPlayer = Instantiate(playerPrefab);
-            var player = newPlayer.GetComponent<PlayerController>();
-            player.SetUpSpaceship(pos);
-            return player;
-        } 
-        
-        private void InstantiateEnemy(Vector3 pos, bool checkNull = true)
-        {
-            
-            if (_enemyShip != null) Destroy(_enemyShip);
-            var newEnemy = Instantiate(enemyPrefab);
-            var enemy = newEnemy.GetComponent<EnemyShip>();
-            enemy.transform.position = pos;
-            _enemyShip = enemy;
-        }
-
+        #region Score
         public void AttemptAddData(string playerName, int score)
         {
             var playerRegistry = new PlayerScoreRegistry()
@@ -158,14 +162,18 @@ namespace Managers
 
             return 0;
         }
+        #endregion
+        
+        #region Coroutines
         private IEnumerator PerformStartGame(float delay = 1f)
         {
             yield return new WaitForSeconds(delay);
             StartPlayers();
             _startedGame = false;
         }
-
-
+        #endregion
+        
+        #region Custom Variables
         [Serializable]
         public struct PlayerScoreRegistry
         {
@@ -187,5 +195,6 @@ namespace Managers
             Normal = 2, 
             Hard = 3
         }
+        #endregion
     }
 }

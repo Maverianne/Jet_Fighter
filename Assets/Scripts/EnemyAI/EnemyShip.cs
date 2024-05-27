@@ -33,28 +33,60 @@ namespace EnemyAI
                         base.Awake();
                         _player = FindObjectOfType<PlayerController>();
                 }
-
-                public override void StartGame()
-                {
-                        base.StartGame();
-                        SelectNextBehaviour();
-                }
-
-
-                protected override void SetShipParameters()
-                {
-                        _enemyParameters = MainManager.Instance.EnemyBehaviourParameters.GetBehaviourParameters(MainManager.Instance.GameplayManager.CurrentDifficulty);
-                        CurrentSpaceShipParameters = _enemyParameters.shipParameters;
-                }
-
+                
                 protected override void FixedUpdate()
                 {
                         if(!CanPlay) return;
                         MoveSpaceship();
                 }
                 
+
+                #region SpaceShip custom functions overrides
+
+                public override void StartGame()
+                {
+                        base.StartGame();
+                        SelectNextBehaviour();
+                }
+                protected override void SetShipParameters()
+                {
+                        _enemyParameters = MainManager.Instance.EnemyBehaviourParameters.GetBehaviourParameters(MainManager.Instance.GameplayManager.CurrentDifficulty);
+                        CurrentSpaceShipParameters = _enemyParameters.shipParameters;
+                }
+                
+                protected override void Shooting()
+                {
+                        if(!CanAttack) return;
+                        
+                        var raycastHit = Physics2D.Raycast(ProjectileSpawnPoint.transform.position, -transform.up, 50f, LayerMask.GetMask(Player));
+                        if(ReferenceEquals(raycastHit.collider, null)) return;
+                        if (!raycastHit.collider.CompareTag(Player)) return;
+                        
+                        _lastAttackTimeStamp = Time.unscaledTime;
+                        _currentAttackCoolDown = Random.Range(_enemyParameters.minAttackCoolDown, _enemyParameters.maxAttackCoolDown);
+                        Impulse();
+                        base.Shooting();
+                }
+
+                protected override void Impulse()
+                {
+                        if(!CanPerformBehaviour(_enemyParameters.impulseChance)) return;
+                        base.Impulse();
+                }
+
+                protected override void DisableShip()
+                {
+                        base.DisableShip();
+                        MainManager.Instance.GameplayManager.GameRoundDone();
+                }
+
+                #endregion
+                
+                #region Enemy AI
+                
                 private void SelectNextBehaviour()
                 {
+                        //Select best behaviour depending on variables
                         if (CanPerformOffense)
                         {
                                 _currentBehaviour = PerformOffense(2);
@@ -81,32 +113,6 @@ namespace EnemyAI
                         if(selectNextBehaviour) SelectNextBehaviour();
                 }
                 
-                protected override void Shooting()
-                {
-                        if(!CanAttack) return;
-                        
-                        var raycastHit = Physics2D.Raycast(ProjectileSpawnPoint.transform.position, -transform.up, 50f, LayerMask.GetMask(Player));
-                        if(ReferenceEquals(raycastHit.collider, null)) return;
-                        if (!raycastHit.collider.CompareTag(Player)) return;
-                        
-                        _lastAttackTimeStamp = Time.unscaledTime;
-                        _currentAttackCoolDown = Random.Range(_enemyParameters.minAttackCoolDown, _enemyParameters.maxAttackCoolDown);
-                        Impulse();
-                        base.Shooting();
-                }
-
-                protected override void Impulse()
-                {
-                        if(Random.Range(0f,1f) > _enemyParameters.impulseChance) return;
-                        base.Impulse();
-                }
-
-                protected override void DisableShip()
-                {
-                        base.DisableShip();
-                        MainManager.Instance.GameplayManager.GameDone();
-                }
-
                 private void ForceIdle()
                 {
                         ClearCurrentBehaviourSequence(false);
@@ -117,6 +123,8 @@ namespace EnemyAI
               
                 private void ForceDodge()
                 {
+                        //A bullet it's coming towards the enemy
+                        //stops the behaviour and prioritizes defense
                         _lastProjectileDodgeTimeStamp = Time.unscaledTime;
                         ClearCurrentBehaviourSequence(false);
                         _currentBehaviour = PerformDefense(2);
@@ -135,20 +143,27 @@ namespace EnemyAI
                         var targetRotation = Quaternion.Euler(new Vector3(rotation.x, rotation.y, _zRot));
                         transform.rotation = Quaternion.RotateTowards(rotation, targetRotation, CurrentSpaceShipParameters.rotatingSpeed * Time.deltaTime * 100);
                 }
-                
+
                 private void OnTriggerEnter2D(Collider2D col)
                 {
                         if(!CanCheckForProjectiles) return;
+                        
                         if (!col.CompareTag(Projectile)) return;
                         var projectileComponent = col.GetComponent<Projectile>();
                         if(MyProjectiles.Contains(projectileComponent)) return;
-                        if (!(Random.Range(0f, 1f) < _enemyParameters.dodgeBulletChance)) return;
+                        
+                        if (!CanPerformBehaviour(_enemyParameters.dodgeBulletChance)) return;
                         ForceDodge();
                 }
+
+                private bool CanPerformBehaviour(float chance)
+                {
+                        return Random.Range(0f, 1f) < chance;
+                }
                 
-                #region Coroutines
+                 #region Coroutines
                 
-           
+                //The timers on offense and defense are to make sure the enemy doesn't stay to long in the same behaviour. 
                 private IEnumerator PerformOffense(float maxDuration)
                 {
                         var timer = 0f;
@@ -184,6 +199,8 @@ namespace EnemyAI
 
                         if (_previousBehaviour == PerformOffense(2))
                         {
+                                //If the previous behaviour was offensive, it's assumed the enemy it's looking at the player or tried to
+                                //this forces the enemy to look another way, because while on idle it only moves
                                 yield return PerformRotate(wait /2);
                                 yield return new WaitForSeconds(wait /2);
                         }
@@ -206,7 +223,7 @@ namespace EnemyAI
                 }
                 
                 #endregion  
+                #endregion
 
-                
         }
 }

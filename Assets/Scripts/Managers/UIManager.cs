@@ -43,13 +43,6 @@ namespace Managers
             StartCoroutine(PerformFade(0.3f, false, _currentCanvasGroup));
         }
 
-        public void SetGameOver()
-        {
-            endMenuText.text = GameOver;
-            StartCoroutine(PerformFade(0.3f, true, endMenu));
-            _currentCanvasGroup = endMenu;
-        }
-
         public void GoToMainMenu()
         {
             endMenu.alpha = 0;
@@ -60,20 +53,19 @@ namespace Managers
 
         private void SetMenuModes()
         {
-          
             MainManager.Instance.GameplayManager.CurrentGameMode = GameplayManager.GameMode.Enemy;
             gameModeText.text = MainManager.Instance.GameplayManager.CurrentGameMode.ToString();
             MainManager.Instance.GameplayManager.CurrentDifficulty = GameplayManager.Difficulty.Normal;
             gameDifficultyText.text = MainManager.Instance.GameplayManager.CurrentDifficulty.ToString();
         }
 
-        private void SetUpCanvasInteractable(CanvasGroup canvasGroup, bool interactable)
+        #region SetScreens
+        public void SetGameOver()
         {
-            canvasGroup.interactable = interactable;
-            canvasGroup.blocksRaycasts = interactable;
-
+            endMenuText.text = GameOver;
+            StartCoroutine(PerformFade(0.3f, true, endMenu));
+            _currentCanvasGroup = endMenu;
         }
-        
         public void SetPlayerWonGame(bool isOnePlayer = false, float playerWinner = 0)
         {
             if (isOnePlayer) endMenuText.text = You + Win;
@@ -81,7 +73,14 @@ namespace Managers
             StartCoroutine(PerformFade(0.3f, true, endMenu));
             _currentCanvasGroup = endMenu;
         }
+        #endregion
+        #region Update Canvas
+        private void SetUpCanvasInteractable(CanvasGroup canvasGroup, bool interactable)
+        {
+            canvasGroup.interactable = interactable;
+            canvasGroup.blocksRaycasts = interactable;
 
+        }
         private IEnumerator PerformFade(float duration, bool fadeIn, CanvasGroup canvasGroup, bool fadeBackground = true)
         {
             SetUpCanvasInteractable(canvasGroup, fadeIn);
@@ -103,6 +102,8 @@ namespace Managers
                 yield return null;
             }
         }
+        #endregion
+       
         
         
     }
