@@ -36,7 +36,7 @@ MonoBehaviour:
     dodgeBulletChance: 0.5
   - difficulty: 2
     shipParameters:
-      maxHealth: 3
+      maxHealth: 4
       speed: 2
       speedIncrement: 0.2
       speedWhileRotating: 1
@@ -57,7 +57,7 @@ MonoBehaviour:
     dodgeBulletChance: 0.5
   - difficulty: 3
     shipParameters:
-      maxHealth: 3
+      maxHealth: 5
       speed: 2.2
       speedIncrement: 0.3
       speedWhileRotating: 1.5

@@ -111,7 +111,7 @@ namespace Managers
                     else
                     {
                         if (_enemyShip.CanPlay) _enemyShip.FinishedGame();
-                        MainManager.Instance.UIManager.SetGameOver();
+                        MainManager.Instance.UIManager.SetGameOver(_playerScores);
                     }
                         
                     break;

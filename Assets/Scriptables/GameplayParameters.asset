@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GameplayParameters
   m_EditorClassIdentifier: 
   playableSpaceshipParameters:
-    maxHealth: 5
+    maxHealth: 3
     speed: 2
     speedIncrement: 0.2
     speedWhileRotating: 1

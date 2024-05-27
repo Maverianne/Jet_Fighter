@@ -47,7 +47,8 @@ namespace EnemyAI
                 {
                         base.StartGame();
                         MyStats.SetInfo(MyScore, SpaceshipName, CurrentSpaceShipParameters.impulseCoolDown, false);
-                        SelectNextBehaviour();
+                        //so it doesn't try to attack 
+                        ForceIdle();
                 }
                 protected override void SetShipParameters()
                 {
@@ -74,9 +75,9 @@ namespace EnemyAI
                         base.Impulse();
                 }
 
-                protected override void DisableShip()
+                protected override void TerminateSpaceship()
                 {
-                        base.DisableShip();
+                        base.TerminateSpaceship();
                         MainManager.Instance.GameplayManager.GameRoundDone();
                 }
 

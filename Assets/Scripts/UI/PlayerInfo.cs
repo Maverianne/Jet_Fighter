@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -16,7 +15,7 @@ namespace UI
 
         private IEnumerator _fillImpulseSlider;
 
-        public bool CanImpulse { get; set; }
+        public bool CanImpulse { get; private set; }
         
         public void SetHealthBar(float percentage)
         {
@@ -30,14 +29,15 @@ namespace UI
             var scoreAlpha = isPlayer ? 1 : 0;
             scoreCg.alpha = scoreAlpha;
             SetHealthBar(1);
+            CanImpulse = true;
             ResetImpulseSlider(resetTime);
         }
         public void ResetImpulseSlider(float resetTime)
         {
-            if(!CanImpulse || _fillImpulseSlider != null) return;
+            if(!CanImpulse) return;
+            CanImpulse = false;
             impulseSlider.value = 0;
             _fillImpulseSlider = PerformFillSlider(resetTime);
-            Debug.Log("kuchao!");
             StartCoroutine(_fillImpulseSlider);
         }
 
@@ -56,7 +56,6 @@ namespace UI
                 yield return null;
             }
 
-            _fillImpulseSlider = null;
             CanImpulse = true;
         }
     }

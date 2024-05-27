@@ -70,12 +70,24 @@ namespace Managers
         }
 
         #region SetScreens
-        public void SetGameOver()
+        public void SetGameOver(List<GameplayManager.PlayerScoreRegistry> registries)
         {
             endMenuText.text = GameOver;
             RemoveButton(restartButton);
-            StartCoroutine(PerformFade(0.3f, true, endMenu));
+            StartCoroutine(PerformFade(0.5f, true, endMenu));
             _currentCanvasGroup = endMenu;
+            
+            maxScoreText.text = string.Empty;
+            minScoreText.text = string.Empty;
+            //If registry is empty, dont show score
+            if(registries.Count == 0) return;
+            foreach (var registry in registries)
+            {
+                if (registry.playerName == Enemy) continue;
+                var playerRegistry = registry;
+                maxScoreText.text = playerRegistry.playerName + Score + playerRegistry.score;
+                break;
+            }
         }
 
         public void SetPlayerWonGame(List<GameplayManager.PlayerScoreRegistry> registries, bool isOnePlayer = false, int winner = 0)
@@ -85,7 +97,7 @@ namespace Managers
             else endMenuText.text = Player + winner + Win;
             RemoveButton(restartButton, false);
             SetUpScore(registries);
-            StartCoroutine(PerformFade(0.3f, true, endMenu));
+            StartCoroutine(PerformFade(0.5f, true, endMenu));
             _currentCanvasGroup = endMenu;
         }
 
@@ -100,6 +112,9 @@ namespace Managers
             //Todo: fix score
             maxScoreText.text = string.Empty;
             minScoreText.text = string.Empty;
+            //If registry is empty, dont show score
+            if(registries.Count == 0) return;
+            
             if (MainManager.Instance.GameplayManager.CurrentGameMode == GameplayManager.GameMode.Survival)
             {
                 foreach (var registry in registries)
@@ -112,9 +127,6 @@ namespace Managers
             }
             else
             {
-                //If registry fails, dont show score
-                if(registries.Count == 0) return;
-                
                 //Set up scores
                 var maxScoreRegistry = registries[0];
                 var secondMaxScoreRegistry = new GameplayManager.PlayerScoreRegistry();

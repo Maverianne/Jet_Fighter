@@ -10,9 +10,9 @@ public class PlayerController : Spaceship
         MyStats.SetInfo(MyScore, SpaceshipName, CurrentSpaceShipParameters.impulseCoolDown);
     }
 
-    protected override void DisableShip()
+    protected override void TerminateSpaceship()
     {
-        base.DisableShip();
+        base.TerminateSpaceship();
         MainManager.Instance.GameplayManager.GameRoundDone(false);
     }
 

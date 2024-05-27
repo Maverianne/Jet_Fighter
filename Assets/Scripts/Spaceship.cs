@@ -148,7 +148,7 @@ public class Spaceship : ScreenWrapObject
         MyStats.SetHealthBar(CurrentHealthPercentage);
     }
     
-    private void TerminateSpaceship()
+    protected virtual void TerminateSpaceship()
     {
         //ship destroyed, play animation
         CanPlay = false;
@@ -161,7 +161,6 @@ public class Spaceship : ScreenWrapObject
         //if still alive after game is done
         //this ship is the winner, add to score
         //disable ship
-        
         CanPlay = false;
         _myScore++;
         MainManager.Instance.GameplayManager.AttemptAddData(spaceshipName, _myScore);
@@ -169,7 +168,7 @@ public class Spaceship : ScreenWrapObject
         gameObject.SetActive(false);
     }
  
-    protected virtual void DisableShip()
+    public void DisableShip()
     {
         //disable on animation event
         gameObject.SetActive(false);
