@@ -53,7 +53,13 @@ public class ScreenWrapObject : MonoBehaviour
         if(!_canCheckScreenBounds) return;;
         _canCheckScreenBounds = false;
         transform.position = GetWrapPosition(_exitDirection);
+        AddScreenOffImpulse();
         StartCoroutine(PerformPlaneExitWrap(_exitDirection));
+    }
+
+    protected virtual void AddScreenOffImpulse()
+    {
+        
     }
 
     private Vector2 GetWrapPosition(Direction direction)

@@ -9,7 +9,7 @@ public class Spaceship : ScreenWrapObject
     [SerializeField] private GameObject projectileSpawnPoint;
     [SerializeField] private GameObject projectile;
 
-    private Rigidbody2D _rigidbody2D;
+    protected Rigidbody2D _rigidbody2D;
     private Animator _animator;
     private CircleCollider2D _collider2D;
     private Quaternion _startRotation;
@@ -29,7 +29,8 @@ public class Spaceship : ScreenWrapObject
     public bool CanPlay { get; set; }
 
     protected GameObject ProjectileSpawnPoint => projectileSpawnPoint;
-    private bool CanImpulse => Time.unscaledTime > _lastImpulseTimeStamp + CurrentSpaceShipParameters.impulseCoolDown;
+    protected bool CanImpulse => Time.unscaledTime > _lastImpulseTimeStamp + CurrentSpaceShipParameters.impulseCoolDown;
+    
     private bool IsRotating => MovementInput != Vector3.zero;
    
     private float CurrentHealthPercentage => Mathf.Clamp01(_currentHealth / CurrentSpaceShipParameters.maxHealth);
@@ -55,6 +56,7 @@ public class Spaceship : ScreenWrapObject
     public virtual void StartGame()
     {
         SetShipParameters();
+        _lastImpulseTimeStamp = Time.unscaledTime;
         _currentSpeed = CurrentSpaceShipParameters.speed;
         _currentHealth = CurrentSpaceShipParameters.maxHealth;
         CanPlay = true;
@@ -62,7 +64,7 @@ public class Spaceship : ScreenWrapObject
 
     protected virtual void Update()
     {
-        if(!CanPlay)return;
+        if(!CanPlay) return;
         if (CurrentHealthPercentage <= 0)
         {
             CanPlay = false;
@@ -76,7 +78,7 @@ public class Spaceship : ScreenWrapObject
 
     protected virtual void FixedUpdate()
     {
-        if(!CanPlay)return;
+        if(!CanPlay) return;
         Rotate(MovementInput);
     }
 
@@ -108,7 +110,7 @@ public class Spaceship : ScreenWrapObject
     {
          if(!CanImpulse) return;
         _lastImpulseTimeStamp = Time.unscaledTime;
-        _rigidbody2D.AddRelativeForce(-transform.up * CurrentSpaceShipParameters.impulseSpeed);
+        _rigidbody2D.AddForce(-transform.up * CurrentSpaceShipParameters.impulseSpeed);
     }
 
     protected virtual void Shooting()
